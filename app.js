@@ -40,6 +40,15 @@ const reportResults = document.getElementById("reportResults");
 
 const paidAmountLabel = document.getElementById("paidAmountLabel");
 const limitInfo = document.getElementById("limitInfo");
+if (limitInfo) {
+    limitInfo.style.display = "block";
+    limitInfo.style.textAlign = "center";
+    limitInfo.style.padding = "10px";
+    limitInfo.style.margin = "10px 0";
+    limitInfo.style.border = "1px solid #ddd";
+    limitInfo.style.borderRadius = "8px";
+    limitInfo.style.backgroundColor = "#fdfdfd";
+}
 
 function normalizeTransactions(transactions) {
     if (Array.isArray(transactions)) return transactions;
@@ -50,11 +59,17 @@ function normalizeTransactions(transactions) {
 function getTrialTransactionCount(transactions) {
     const items = normalizeTransactions(transactions);
 
-    return items.filter(item =>
-        item &&
-        LIMITED_TRANSACTION_TYPES.includes(item.type) &&
-        item.description !== "پرداخت هنگام معامله"
-    ).length;
+    return items.filter(item => {
+        if (!item) return false;
+
+        const type = item.type;
+        const description = String(item.description || "").trim();
+
+        return (
+            LIMITED_TRANSACTION_TYPES.includes(type) &&
+            description !== "پرداخت هنگام معامله"
+        );
+    }).length;
 }
 
 function getTrialRemainingCount(transactions) {
@@ -75,6 +90,7 @@ function updateLimitInfo(transactions) {
     }
 
     limitInfo.style.color = remaining <= 5 ? "#d32f2f" : "#2e7d32";
+    limitInfo.style.fontWeight = "bold";
 }
 
 async function checkTrialLimitBeforeSubmit() {
@@ -804,7 +820,7 @@ async function openPdfTrade() {
                     ${createPdfRow("وزن خالص", lastTrade.weight ? `${formatDisplayNumber(lastTrade.weight)} کیلوگرم` : "")}
                     ${createPdfRow("قیمت فی", lastTrade.pricePerKilo ? `${formatDisplayNumber(lastTrade.pricePerKilo)} تومان` : "")}
                     ${createPdfRow("تعداد عدل", lastTrade.bagCount ? formatDisplayNumber(lastTrade.bagCount) : "")}
-                    ${createPdfRow("اونس", lastTrade.ounce ? `${formatDisplayNumber(Number(lastTrade.ounce)+2)} → ${formatDisplayNumber(lastTrade.ounce)}` : "")}
+                    ${createPdfRow("اونس", lastTrade.ounce ? `${formatDisplayNumber(Number(lastTrade.ounce) + 2)} → ${formatDisplayNumber(lastTrade.ounce)}` : "")}
                     ${createPdfRow("دهن‌بست", lastTrade.dahanbast ? `${formatDisplayNumber(lastTrade.dahanbast)} درصد` : "")}
                 </table>
 
