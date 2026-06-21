@@ -1,4 +1,4 @@
-const CACHE_NAME = "pistachio-ledger-v5";
+const CACHE_NAME = "pistachio-ledger-v6";
 
 const ASSETS = [
   "./",
