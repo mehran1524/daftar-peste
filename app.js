@@ -4,7 +4,7 @@ import {
     applyPersianFormatting
 } from "./utils.js";
 
-const TRIAL_LIMIT = 40;
+const TRIAL_LIMIT = 20;
 const LIMITED_TRANSACTION_TYPES = ["buy", "sell", "debt", "credit"];
 
 const form = document.getElementById("transactionForm");
