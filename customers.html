@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>دفتر مشتریان</title>
+<link rel="stylesheet" href="style.css"/>
+
+<style>
+body{
+background:#f4f6f8;
+font-family:Tahoma,sans-serif;
+}
+
+.customers-header{
+background:#1976d2;
+color:white;
+padding:15px;
+text-align:center;
+position:relative;
+}
+
+.back-btn{
+position:absolute;
+right:10px;
+top:12px;
+background:white;
+color:#1976d2;
+border:none;
+padding:5px 12px;
+border-radius:20px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.container{
+padding:15px;
+max-width:600px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+input{
+width:100%;
+padding:8px;
+margin-top:6px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+.btn-primary{
+background:#1976d2;
+color:white;
+border:none;
+padding:10px;
+margin-top:10px;
+width:100%;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.btn-cancel{
+background:#888;
+color:white;
+border:none;
+padding:10px;
+margin-top:10px;
+width:100%;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.customer-item{
+padding:10px;
+border-bottom:1px solid #eee;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+transition: background 0.2s;
+}
+
+.customer-item:hover{
+background:#f9f9f9;
+}
+
+.customer-name{
+font-weight:bold;
+color:#1976d2;
+}
+
+.balance-green{
+color:#2e7d32;
+font-weight:bold;
+}
+
+.balance-red{
+color:#d32f2f;
+font-weight:bold;
+}
+
+.status-text{
+font-size:12px;
+display:block;
+}
+
+.delete-btn{
+background:#d32f2f;
+color:white;
+border:none;
+padding:4px 8px;
+border-radius:6px;
+cursor:pointer;
+margin-top:4px;
+}
+
+.edit-btn{
+background:#ff9800;
+color:white;
+border:none;
+padding:4px 8px;
+border-radius:6px;
+cursor:pointer;
+margin-top:4px;
+margin-left:4px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="customers-header">
+<button class="back-btn" onclick="goBack()">بازگشت</button>
+<h2>دفتر مشتریان</h2>
+</div>
+
+<div class="container">
+
+<div class="card">
+<h3 id="formTitle">ثبت مشتری جدید</h3>
+
+<input type="hidden" id="editId"/>
+
+<input type="text" id="customerName" placeholder="نام مشتری"/>
+
+<input
+type="tel"
+id="customerPhone"
+placeholder="موبایل"
+maxlength="11"
+pattern="[0-9]{11}"
+inputmode="numeric"
+/>
+
+<button id="submitBtn" class="btn-primary" onclick="saveCustomer()">ثبت مشتری</button>
+
+<button id="cancelBtn" class="btn-cancel" style="display:none;" onclick="cancelEdit()">انصراف از ویرایش</button>
+
+</div>
+
+<div class="card">
+<input type="text" id="searchInput" placeholder="جستجوی مشتری..." oninput="loadCustomers()"/>
+</div>
+
+<div class="card">
+<h3>لیست مشتریان</h3>
+<div id="customersList"></div>
+</div>
+
+</div>
+
+<script src="db.js"></script>
+
+<script>
+
+let editingCustomerId=null;
+
+function toPersianDigits(num){
+return num.toString().replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);
+}
+
+function goBack(){
+window.location.href="index.html";
+}
+
+async function saveCustomer(){
+
+const name=document.getElementById("customerName").value.trim();
+const phone=document.getElementById("customerPhone").value.trim();
+
+if(!name){
+alert("نام مشتری الزامی است");
+return;
+}
+
+if(editingCustomerId){
+await updateCustomer(editingCustomerId,{name,phone});
+}else{
+await addCustomer({name,phone});
+}
+
+resetForm();
+loadCustomers();
+}
+
+function startEdit(customer){
+
+editingCustomerId=customer.id;
+
+document.getElementById("customerName").value=customer.name;
+document.getElementById("customerPhone").value=customer.phone||"";
+
+document.getElementById("submitBtn").innerText="ذخیره تغییرات";
+document.getElementById("cancelBtn").style.display="block";
+
+document.getElementById("formTitle").innerText="ویرایش مشتری";
+
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function cancelEdit(){
+resetForm();
+}
+
+function resetForm(){
+
+editingCustomerId=null;
+
+document.getElementById("customerName").value="";
+document.getElementById("customerPhone").value="";
+
+document.getElementById("submitBtn").innerText="ثبت مشتری";
+document.getElementById("cancelBtn").style.display="none";
+document.getElementById("formTitle").innerText="ثبت مشتری جدید";
+
+}
+
+async function calculateCustomerBalance(customerId){
+
+const transactions=await getTransactionsByCustomer(customerId);
+
+const balance=transactions.reduce((sum,t)=>{
+return sum + Number(t.amount);
+},0);
+
+return balance;
+}
+
+async function loadCustomers(){
+
+const listEl=document.getElementById("customersList");
+const searchValue=document.getElementById("searchInput").value.trim();
+
+listEl.innerHTML="";
+
+const customers=await getAllCustomers();
+
+for(let customer of customers){
+
+if(searchValue && !customer.name.includes(searchValue)) continue;
+
+const balance=await calculateCustomerBalance(customer.id);
+
+const div=document.createElement("div");
+
+div.className="customer-item";
+
+div.onclick=()=>{
+window.location.href=`customer-ledger.html?id=${customer.id}`;
+};
+
+let balanceClass="";
+let statusText="";
+
+if(balance<0){
+balanceClass="balance-red";
+statusText="بدهکار";
+}
+else if(balance>0){
+balanceClass="balance-green";
+statusText="بستانکار";
+}
+
+let balanceText=Math.abs(balance).toLocaleString();
+balanceText=toPersianDigits(balanceText);
+
+div.innerHTML=`
+
+<div style="flex:1;">
+<div class="customer-name">${customer.name}</div>
+<small>${customer.phone || ""}</small>
+</div>
+
+<div class="${balanceClass}" style="text-align:left;">
+
+${balanceText}
+
+${statusText ? `<span class="status-text">${statusText}</span>` : ""}
+
+<br>
+
+<button class="edit-btn"
+onclick='event.stopPropagation(); startEdit(${JSON.stringify(customer)})'>
+ویرایش
+</button>
+
+<button class="delete-btn"
+onclick="event.stopPropagation(); removeCustomer(${customer.id})">
+حذف
+</button>
+
+</div>
+
+`;
+
+listEl.appendChild(div);
+
+}
+
+}
+
+async function removeCustomer(id){
+
+if(!confirm("آیا از حذف این مشتری مطمئن هستید؟")) return;
+
+await deleteCustomer(id);
+
+loadCustomers();
+
+}
+
+window.addEventListener("load",loadCustomers);
+
+</script>
+
+</body>
+</html>

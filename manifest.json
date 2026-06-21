@@ -1,0 +1,10 @@
+{
+  "name": "دفتر حساب پسته",
+  "short_name": "دفتر پسته",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#2e7d32",
+  "description": "اپ حسابداری محلی برای خرید و فروش پسته",
+  "icons": []
+}

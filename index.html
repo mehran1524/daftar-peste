@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>دفتر حساب پسته</title>
+<meta name="theme-color" content="#2e7d32" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="stylesheet" href="style.css" />
+
+<style>
+html, body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+}
+
+.app-header{
+    background:#2e7d32;
+    color:white;
+    padding:20px 0 0 0;
+    text-align:center;
+    box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height:150px;
+}
+
+.datetime-container{
+    display:flex;
+    flex-direction:row-reverse;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    direction:rtl;
+    margin-top:8px;
+    font-family:'Tahoma',sans-serif;
+    font-size:0.8rem;
+    background:rgba(0,0,0,0.15);
+    padding:4px 12px;
+    border-radius:20px;
+    width:fit-content;
+    margin-bottom:50px;
+}
+
+.header-tabs{
+    display:flex;
+    flex-direction:row;
+    direction:rtl;
+    position:absolute;
+    bottom:0;
+    right:0;
+    height:40px;
+    width:auto;
+    gap:1px;
+}
+
+.tab-item{
+    flex: 1;
+    min-width: 80px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:0.8rem;
+    font-weight:bold;
+    text-decoration:none;
+    cursor:pointer;
+    transition:all 0.2s;
+    border:none;
+    outline:none;
+    font-family:inherit;
+    position:relative;
+    white-space:nowrap;
+    padding:0 6px;
+}
+
+.header-tabs .tab-item:first-child{
+    border-radius:0 15px 0 0;
+}
+
+.header-tabs .tab-item:last-child{
+    border-radius:15px 0 0 0;
+}
+
+.tab-customers{
+    background:#1976d2;
+}
+
+.tab-reports{
+    background:#e67e22;
+}
+
+.tab-pdf{
+    background:#009688;
+    font-size:0.72rem;
+}
+
+.tab-backup{
+    background:#8e44ad;
+    font-size:0.72rem;
+}
+
+.tab-item:active{
+    filter:brightness(1.2);
+    font-size:0.75rem;
+}
+
+.readonly-input{
+    background-color:#f1f8e9!important;
+    font-weight:bold;
+    color:#2e7d32;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:1000;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,0.7);
+    backdrop-filter:blur(5px);
+}
+
+.modal-content{
+    background-color:#fefefe;
+    margin:10% auto;
+    padding:20px;
+    border-radius:15px;
+    width:85%;
+    max-width:450px;
+    position:relative;
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close-modal{
+    color:#aaa;
+    float:left;
+    font-size:28px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.report-result-box{
+    background:#f1f8e9;
+    border-radius:10px;
+    padding:15px;
+    margin-top:15px;
+}
+
+.report-item{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+    font-size:0.95rem;
+}
+
+#customerStatusLabel{
+    margin-bottom:10px;
+    border-radius:8px;
+}
+
+.tab-tooltip{
+    position:absolute;
+    bottom:48px;
+    left:50%;
+    transform:translateX(-50%) translateY(6px);
+    background:rgba(33,33,33,0.96);
+    color:#fff;
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:0.72rem;
+    font-weight:normal;
+    line-height:1.7;
+    width:220px;
+    text-align:center;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:all 0.2s ease;
+    z-index:1200;
+    white-space:normal;
+    box-shadow:0 4px 12px rgba(0,0,0,0.25);
+}
+
+.tab-tooltip::after{
+    content:"";
+    position:absolute;
+    top:100%;
+    left:50%;
+    transform:translateX(-50%);
+    border-width:6px;
+    border-style:solid;
+    border-color:rgba(33,33,33,0.96) transparent transparent transparent;
+}
+
+.tab-backup:hover .tab-tooltip,
+.tab-backup:focus .tab-tooltip,
+.tab-backup:active .tab-tooltip{
+    opacity:1;
+    visibility:visible;
+    transform:translateX(-50%) translateY(0);
+}
+
+.backup-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-download {
+    background-color: #2e7d32 !important;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+}
+
+.btn-restore {
+    background-color: #e67e22 !important;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<header class="app-header">
+    <h1>به نام خداوندروزی رسان</h1>
+    <h3>دفتر حساب پسته</h3>
+
+    <div class="datetime-container">
+        <span id="liveClock">۰۰:۰۰:۰۰</span>
+        <span style="opacity:0.5;">|</span>
+        <span id="todayDate">در حال دریافت...</span>
+    </div>
+
+    <div class="header-tabs">
+        <button type="button" onclick="openCustomersPage()" class="tab-item tab-customers">دفتر مشتریان</button>
+
+        <button type="button" id="openReportBtn" class="tab-item tab-reports">گزارش‌گیری</button>
+        
+        <!-- تب جدید -->
+        <button type="button" onclick="openPdfTrade()" class="tab-item tab-pdf">PDF  آخرین معامله</button>
+
+        <button
+            type="button"
+            id="openBackupBtn"
+            class="tab-item tab-backup"
+            title="لطفا هر هفته از اطلاعاتتون پشتیبان گیری کنید"
+        >
+            پشتیبان‌گیری
+            <span class="tab-tooltip">لطفا هر هفته از اطلاعاتتون پشتیبان گیری کنید</span>
+        </button>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="card">
+        <h2 id="statsTitle">وضعیت امروز (تومان)</h2>
+
+        <div class="stats">
+            <div class="stat-box">
+                <span>خرید امروز</span>
+                <strong id="buyToday">۰</strong>
+            </div>
+
+            <div class="stat-box">
+                <span>فروش امروز</span>
+                <strong id="sellToday">۰</strong>
+            </div>
+
+            <div class="stat-box" style="background:#fff9c4;">
+                <span id="balanceLabel">تراز مالی امروز</span>
+                <strong id="balance">۰</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>ثبت تراکنش جدید</h2>
+
+        <form id="transactionForm">
+
+            <div class="form-group">
+                <label>نوع تراکنش</label>
+                <select id="type" required>
+                    <option value="buy">خرید پسته</option>
+                    <option value="sell">فروش پسته</option>
+                    <option value="debt">پرداخت نقدی (بدهی)</option>
+                    <option value="credit">دریافت نقدی (طلب)</option>
+                </select>
+            </div>
+
+            <div id="calcSection">
+
+                <div class="form-group">
+                    <label>نوع پسته</label>
+                    <select id="pistachioType">
+                        <option value="اکبری">اکبری</option>
+                        <option value="احمدآقایی">احمدآقایی</option>
+                        <option value="فندقی">فندقی</option>
+                        <option value="کله‌قوچی">کله‌قوچی</option>
+                        <option value="دهن‌بست">دهن‌بست</option>
+                        <option value="مغز">مغز پسته</option>
+                        <option value="سایر">سایر موارد</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>وزن خالص (کیلو)</label>
+                        <input type="number" id="weight" step="0.01" inputmode="decimal" placeholder="مثلاً ۱۵۰.۵" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>قیمت فی (تومان)</label>
+                        <input type="text" id="pricePerKilo" inputmode="numeric" placeholder="مثلاً ۶۰۰,۰۰۰" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>تعداد (عدل)</label>
+                        <input type="number" id="bagCount" inputmode="numeric" placeholder="تعداد گونی" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>اونس (حد پایین)</label>
+                        <input type="number" id="ounce" step="1" inputmode="numeric" placeholder="مثلاً ۲۶" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>دهن‌بست (درصد)</label>
+                    <input type="number" id="dahanbast" step="0.1" inputmode="decimal" placeholder="مثلاً ۵" />
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label>مشتری (اختیاری)</label>
+                <select id="customerSelect">
+                    <option value="">مشتری محترم</option>
+                </select>
+                <div id="customerStatusLabel"></div>
+            </div>
+
+            <div class="form-group" id="totalAmountGroup">
+                <label>مبلغ کل معامله (تومان)</label>
+                <input type="text" id="amount" inputmode="numeric" placeholder="۰" readonly class="readonly-input" />
+            </div>
+
+            <div class="form-group">
+                <label id="paidAmountLabel">پرداخت / دریافت نقدی</label>
+                <input type="text" id="paidAmount" inputmode="numeric" placeholder="تومان" />
+            </div>
+
+            <div class="form-group">
+                <label>شرح تراکنش</label>
+                <input type="text" id="description" placeholder="شرح" />
+            </div>
+
+            <button type="submit" class="btn-submit">ثبت در دفتر حساب</button>
+
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>لیست آخرین تراکنش‌ها</h2>
+        <ul id="transactionList" class="transaction-list"></ul>
+    </section>
+
+</main>
+
+<div id="reportModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeReportBtn">&times;</span>
+        <h2 style="color:#2e7d32;">گزارش‌گیری دوره‌ای</h2>
+
+        <div class="form-group">
+            <label>از تاریخ</label>
+            <select id="fromDate"></select>
+        </div>
+
+        <div class="form-group">
+            <label>تا تاریخ</label>
+            <select id="toDate"></select>
+        </div>
+
+        <button id="generateReportBtn" class="btn-submit" style="background-color:#e67e22;">نمایش گزارش</button>
+
+        <div id="reportResults" class="report-result-box" style="display:none;">
+            <div class="report-item">
+                <span>کل خرید:</span>
+                <strong id="totalBuyRange" class="text-red">۰</strong>
+            </div>
+
+            <div class="report-item">
+                <span>کل فروش:</span>
+                <strong id="totalSellRange" class="text-green">۰</strong>
+            </div>
+
+            <hr>
+
+            <div class="report-item">
+                <span>سود / زیان تجاری:</span>
+                <strong id="finalBalanceRange">۰</strong>
+            </div>
+
+            <div class="report-item">
+                <span>تراز مالی بین دو تاریخ:</span>
+                <strong id="financialBalanceRange">۰</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="backupModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeBackupBtn">&times;</span>
+
+        <h2 style="color:#8e44ad; margin-bottom: 15px;">پشتیبان‌گیری از داده‌ها</h2>
+
+        <p style="font-size: 0.8rem; line-height: 1.6; color: #666;">
+            با دانلود بکاپ، یک فایل JSON در گوشی شما ذخیره می‌شود. برای بازیابی، همان فایل را انتخاب کنید.
+        </p>
+        
+        <div class="backup-actions">
+            <button type="button" class="btn-download" onclick="downloadBackup()">دانلود اطلاعات</button>
+            <button type="button" class="btn-restore" onclick="triggerFileSelect()">بازیابی اطلاعات</button>
+        </div>
+
+        <input type="file" id="fileInput" accept=".json" style="display:none;" />
+    </div>
+</div>
+
+<script>
+function openCustomersPage(){
+    window.location.href = "customers.html";
+}
+
+const backupModal = document.getElementById("backupModal");
+const openBackupBtn = document.getElementById("openBackupBtn");
+const closeBackupBtn = document.getElementById("closeBackupBtn");
+const fileInput = document.getElementById("fileInput");
+
+openBackupBtn.addEventListener("click", () => {
+    backupModal.style.display = "block";
+});
+
+closeBackupBtn.addEventListener("click", () => {
+    backupModal.style.display = "none";
+});
+
+window.addEventListener("click", (event) => {
+    if (event.target == backupModal) {
+        backupModal.style.display = "none";
+    }
+});
+
+function triggerFileSelect() {
+    const confirmRestore = confirm("توجه: بازیابی اطلاعات باعث جایگزینی داده‌های فعلی با داده‌های فایل بکاپ می‌شود. آیا مطمئن هستید؟");
+
+    if(confirmRestore) {
+        fileInput.click();
+    }
+}
+
+fileInput.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+
+    if (file) {
+        restoreBackupFromFile(file);
+    }
+});
+</script>
+
+<script src="db.js"></script>
+<script src="backup.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
