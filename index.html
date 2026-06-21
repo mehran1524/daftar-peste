@@ -6,8 +6,8 @@
 <title>دفتر حساب پسته</title>
 <meta name="theme-color" content="#2e7d32" />
 <link rel="manifest" href="manifest.json" />
-<link rel="icon" href="icon-192.png" />
-<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="icon" href="icons/iconapp192.png" />
+<link rel="apple-touch-icon" href="icons/iconapp192.png" />
 <link rel="stylesheet" href="style.css" />
 
 <style>
@@ -499,6 +499,19 @@ fileInput.addEventListener("change", function(e) {
 
 
 <script type="module" src="app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(function (registration) {
+        console.log("Service Worker Registered ✅", registration.scope);
+      })
+      .catch(function (error) {
+        console.log("Service Worker Registration Failed ❌", error);
+      });
+  });
+}
+</script>
 
 </body>
 </html>

@@ -9,8 +9,8 @@ const ASSETS = [
   "./db.js",
   "./backup.js",
   "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png"
+  "./icons/icon-192.png",
+  "./icons/icon-512.png"
 ];
 
 function isHttpRequest(request) {
