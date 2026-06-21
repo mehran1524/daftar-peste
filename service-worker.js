@@ -1,4 +1,4 @@
-const CACHE_NAME = "pistachio-ledger-v4";
+const CACHE_NAME = "pistachio-ledger-v5";
 
 const ASSETS = [
   "./",
@@ -9,8 +9,8 @@ const ASSETS = [
   "./db.js",
   "./backup.js",
   "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/iconapp192.png",
+  "./icons/iconapp512.png"
 ];
 
 function isHttpRequest(request) {
