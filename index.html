@@ -25,7 +25,7 @@ html, body{
     display:flex;
     flex-direction:column;
     align-items:center;
-    min-height:150px;
+    min-height:130px;
 }
 
 .datetime-container{
@@ -44,6 +44,7 @@ html, body{
     width:fit-content;
     margin-bottom:50px;
 }
+
 
 .header-tabs{
     display:flex;
@@ -512,6 +513,33 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+<!-- شروع کد مودال -->
+<div id="trialModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:9999;">
+  <div style="background:white; padding:25px; border-radius:12px; text-align:center; max-width:320px; width:90%; font-family:sans-serif;">
+    
+    <h3>نسخه آزمایشی به پایان رسید</h3>
+    <p>برای فعالسازی برنامه با ما تماس بگیرید</p>
+
+    <button id="showPhoneBtn" onclick="document.getElementById('phoneNumber').style.display='block'; this.style.display='none';" style="padding:10px 18px; background:#2196f3; color:white; border:none; border-radius:8px; font-size:15px; cursor:pointer;">
+      نمایش شماره تماس
+    </button>
+
+    <p id="phoneNumber" style="margin-top:15px; font-size:18px; font-weight:bold; display:none;">
+      09373680247
+    </p>
+
+    <a href="tel:09373680247" style="display:block; margin-top:10px; text-decoration:none; color:white; background:#4caf50; padding:10px; border-radius:8px;">
+      تماس مستقیم
+    </a>
+
+    <a href="https://rubika.ir/Mehr1524" target="_blank" style="display:block; margin-top:10px; text-decoration:none; color:white; background:#7b1fa2; padding:10px; border-radius:8px;">
+      ارسال پیام در روبیکا
+    </a>
+    
+  </div>
+</div>
+<!-- پایان کد مودال -->
+
 
 </body>
 </html>

@@ -100,7 +100,14 @@ async function checkTrialLimitBeforeSubmit() {
     updateLimitInfo(allItems);
 
     if (remaining <= 0) {
-        alert("ظرفیت نسخه آزمایشی (۴۰ معامله) تکمیل شده است");
+
+         const modal = document.getElementById("trialModal");
+
+        if (modal) {
+            modal.style.display = "flex";
+        }
+
+
         return false;
     }
 
