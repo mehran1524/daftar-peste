@@ -3,7 +3,7 @@
    Version: 1.1
    ================================ */
 
-const CACHE_NAME = "pistachio-ledger-v1.3"; 
+const CACHE_NAME = "pistachio-ledger-v1.4"; 
 
 const ASSETS = [
   "./",
