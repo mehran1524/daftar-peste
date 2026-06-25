@@ -3,14 +3,16 @@
    Version: 1.1
    ================================ */
 
-const CACHE_NAME = "pistachio-ledger-v1.1"; 
+const CACHE_NAME = "pistachio-ledger-v1.2"; 
 
 const ASSETS = [
   "./",
   "./index.html",
   "./customers.html",
+  "./customers-ledger.html",
   "./style.css",
   "./app.js",
+  "./ledger.js",
   "./utils.js", // حتماً فایل جدید را اینجا اضافه کن
   "./db.js",
   "./backup.js",

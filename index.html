@@ -258,7 +258,7 @@ html, body{
     <div class="header-tabs">
         <button type="button" onclick="openCustomersPage()" class="tab-item tab-customers">دفتر مشتریان</button>
 
-        <button type="button" id="openReportBtn" class="tab-item tab-reports">گزارش‌گیری</button>
+        <button type="button" id="openReportBtn" class="tab-item tab-reports">گزارش دوره‌ای</button>
         
         <!-- تب جدید -->
         <button type="button" onclick="openPdfTrade()" class="tab-item tab-pdf">PDF  آخرین معامله</button>
@@ -331,8 +331,8 @@ html, body{
                 <div class="form-row">
                     <div class="form-group">
                         <label>وزن خالص (کیلو)</label>
-                        <input type="number" id="weight" step="0.01" inputmode="decimal" placeholder="مثلاً ۱۵۰.۵" />
-                    </div>
+                        <input type="text" id="weight" inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="مثلاً ۱۵۰.۵" />
+                 </div>
 
                     <div class="form-group">
                         <label>قیمت فی (تومان)</label>
@@ -352,12 +352,18 @@ html, body{
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>دهن‌بست (درصد)</label>
-                    <input type="number" id="dahanbast" step="0.1" inputmode="decimal" placeholder="مثلاً ۵" />
-                </div>
+              <div class="form-row">
+    <div class="form-group">
+        <label>دهن‌بست (درصد/گرم)</label>
+        <input type="number" id="dahanbast" step="۱" inputmode="numeric" placeholder="مثلاً ۵" />
+    </div>
 
-            </div>
+    <div class="form-group">
+        <label>گرید</label>
+        <input type="number" id="grade" step="1" inputmode="numeric" placeholder="مثلاً ۱" />
+    </div>
+</div>
+
 
             <div class="form-group">
                 <label>مشتری (اختیاری)</label>

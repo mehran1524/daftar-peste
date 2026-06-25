@@ -22,6 +22,9 @@ const calcSection = document.getElementById("calcSection");
 const ounceInput = document.getElementById("ounce");
 const dahanbastInput = document.getElementById("dahanbast");
 const bagCountInput = document.getElementById("bagCount");
+// زیر خط مربوط به bagCountInput اضافه کن:
+const gradeInput = document.getElementById("grade");
+
 const customerSelect = document.getElementById("customerSelect");
 const paidAmountInput = document.getElementById("paidAmount");
 
@@ -243,11 +246,7 @@ form.addEventListener("submit", async (e) => {
 
     updateLimitInfo(allItems);
 
-    if (usedCount >= TRIAL_LIMIT) {
-        alert("ظرفیت نسخه آزمایشی (۴۰ معامله) تکمیل شده است");
-        return;
-    }
-
+   
     const transaction = {
         type,
         amount,
@@ -258,6 +257,7 @@ form.addEventListener("submit", async (e) => {
         bagCount: parseInputNumber(bagCountInput.value) || null,
         ounce: parseInputNumber(ounceInput.value) || null,
         dahanbast: parseInputNumber(dahanbastInput.value) || null,
+        grade: parseInputNumber(gradeInput.value) || null,
         description: document.getElementById("description").value,
         createdAt: new Date().toISOString()
     };
@@ -295,6 +295,7 @@ form.addEventListener("submit", async (e) => {
     }
 
     form.reset();
+    if(gradeInput) gradeInput.value = "";
 
     calcSection.style.display = "block";
     totalAmountGroup.style.display = "block";
@@ -447,19 +448,25 @@ async function loadTransactions() {
         if (item.pistachioType) details += ` | پسته ${item.pistachioType}`;
         if (item.weight) details += ` | ${formatDisplayNumber(item.weight)} کیلو`;
         if (item.pricePerKilo) details += ` (فی: ${formatDisplayNumber(item.pricePerKilo)})`;
+        if (item.bagCount) details += ` | عدل: ${formatDisplayNumber(item.bagCount)}`;
+        if (item.ounce) details += ` | اونس: ${formatDisplayNumber(Number(item.ounce) + 2)}-${formatDisplayNumber(item.ounce)}`;
+        if (item.dahanbast) details += ` | دهن‌بست: ${formatDisplayNumber(item.dahanbast)}٪`;
+        if (item.grade) details += ` | گرید: ${formatDisplayNumber(item.grade)}`;
 
-        li.innerHTML = `
-            <div class="item-info">
-                <strong>${labelType(item.type)}${customerNameLabel}</strong>
-                <span class="item-desc">${item.description || ""} ${details}</span>
-                <small style="display:block;color:#888;font-size:10px">
-                    ${itemDate.toLocaleTimeString("fa-IR")}
-                </small>
-            </div>
-            <div class="item-amount ${colorClass}">
-                ${sign}${formatDisplayNumber(Math.abs(item.amount))}
-            </div>
-        `;
+       li.innerHTML = `
+    <div class="item-info">
+        <strong>${labelType(item.type)}${customerNameLabel}</strong>
+        <span class="item-desc" style="font-size:15px; line-height:1.8;">
+            ${item.description || ""} ${details}
+        </span>
+        <small style="display:block;color:#888;font-size:10px">
+            ${itemDate.toLocaleTimeString("fa-IR")}
+        </small>
+    </div>
+    <div class="item-amount ${colorClass}">
+        ${sign}${formatDisplayNumber(Math.abs(item.amount))}
+    </div>
+`;
 
         transactionList.appendChild(li);
 
