@@ -453,20 +453,21 @@ async function loadTransactions() {
         if (item.dahanbast) details += ` | دهن‌بست: ${formatDisplayNumber(item.dahanbast)}٪`;
         if (item.grade) details += ` | گرید: ${formatDisplayNumber(item.grade)}`;
 
-       li.innerHTML = `
+           li.innerHTML = `
     <div class="item-info">
         <strong>${labelType(item.type)}${customerNameLabel}</strong>
         <span class="item-desc" style="font-size:15px; line-height:1.8;">
             ${item.description || ""} ${details}
         </span>
-        <small style="display:block;color:#888;font-size:10px">
-            ${itemDate.toLocaleTimeString("fa-IR")}
+        <small style="display:block; color:#666; font-size:12px; margin-top:5px; font-weight:bold;">
+            📅 ${itemDateStr} | 🕒 ${itemDate.toLocaleTimeString("fa-IR", {hour: '2-digit', minute:'2-digit'})}
         </small>
     </div>
     <div class="item-amount ${colorClass}">
         ${sign}${formatDisplayNumber(Math.abs(item.amount))}
     </div>
 `;
+
 
         transactionList.appendChild(li);
 
