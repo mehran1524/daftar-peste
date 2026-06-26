@@ -2,7 +2,9 @@
    Service Worker - Pistachio App
    ================================ */
 
-const CACHE_NAME = "pistachio-ledger-v1.8";
+const CACHE_NAME = "pistachio-ledger-v2.1";
+
+const HTML2PDF_CDN = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
 
 const ASSETS = [
   "./",
@@ -17,51 +19,96 @@ const ASSETS = [
   "./backup.js",
   "./manifest.json",
   "./icons/iconapp192.png",
-  "./icons/iconapp512.png"
+  "./icons/iconapp512.png",
+  HTML2PDF_CDN
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(ASSETS);
+    })()
   );
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
         keys
           .filter((key) => key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       );
-    })
+    })()
   );
   self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-  const url = new URL(event.request.url);
+  const request = event.request;
+  const url = new URL(request.url);
 
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) return response;
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
 
-      if (event.request.mode === "navigate") {
+      const cachedResponse = await cache.match(request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      if (request.mode === "navigate") {
         if (url.pathname.endsWith("/customer-ledger.html")) {
-          return caches.match("./customer-ledger.html");
+          const page = await cache.match("./customer-ledger.html");
+          if (page) return page;
         }
 
         if (url.pathname.endsWith("/customers.html")) {
-          return caches.match("./customers.html");
+          const page = await cache.match("./customers.html");
+          if (page) return page;
         }
 
-        return caches.match("./index.html");
+        const homePage = await cache.match("./index.html");
+        if (homePage) return homePage;
       }
 
-      return Response.error();
-    })
+      try {
+        const networkResponse = await fetch(request);
+
+        if (
+          request.method === "GET" &&
+          (url.origin === self.location.origin || request.url === HTML2PDF_CDN)
+        ) {
+          await cache.put(request, networkResponse.clone());
+        }
+
+        return networkResponse;
+      } catch (error) {
+        if (request.url === HTML2PDF_CDN) {
+          const cdnResponse = await cache.match(HTML2PDF_CDN);
+          if (cdnResponse) return cdnResponse;
+        }
+
+        if (request.mode === "navigate") {
+          if (url.pathname.endsWith("/customer-ledger.html")) {
+            const page = await cache.match("./customer-ledger.html");
+            if (page) return page;
+          }
+
+          if (url.pathname.endsWith("/customers.html")) {
+            const page = await cache.match("./customers.html");
+            if (page) return page;
+          }
+
+          const homePage = await cache.match("./index.html");
+          if (homePage) return homePage;
+        }
+
+        return Response.error();
+      }
+    })()
   );
 });
