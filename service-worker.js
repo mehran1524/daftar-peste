@@ -8,7 +8,7 @@ const ASSETS = [
   "./",
   "./index.html",
   "./customers.html",
-  "./customers-ledger.html",
+  "./customer-ledger.html",
   "./style.css",
   "./app.js",
   "./ledger.js",
