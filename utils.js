@@ -27,9 +27,9 @@ export function toEnglishDigits(value) {
 export function formatDisplayNumber(value) {
     if (value === null || value === undefined || value === "") return "۰";
 
-    // ابتدا تبدیل به انگلیسی، سپس حذف کاراکترهای غیرعددی (به جز نقطه اعشار)
     const cleaned = toEnglishDigits(value)
-        .replace(/,/g, "")
+        .replace(/[٬,]/g, "")
+        .replace(/٫/g, ".")
         .replace(/[^\d.]/g, "");
 
     if (cleaned === "") return "۰";
@@ -47,15 +47,16 @@ export function formatDisplayNumber(value) {
 export function parseInputNumber(value) {
     if (value === null || value === undefined || value === "") return 0;
 
-    // تبدیل به انگلیسی و حذف جداکننده‌های هزارگان (کاما)
     const cleaned = toEnglishDigits(String(value))
-        .replace(/,/g, "")
+        .replace(/[٬,]/g, "")
+        .replace(/٫/g, ".")
         .replace(/[^\d.]/g, "");
 
     const number = Number(cleaned);
 
     return Number.isNaN(number) ? 0 : number;
 }
+
 
 /* اعمال فارسی‌سازی روی همه خروجی‌های عددی صفحه */
 export function applyPersianFormatting() {

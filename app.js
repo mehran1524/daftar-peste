@@ -1,8 +1,11 @@
 import {
     formatDisplayNumber,
     parseInputNumber,
-    applyPersianFormatting
+    applyPersianFormatting,
+    toPersianDigits,
+    toEnglishDigits
 } from "./utils.js";
+
 
 const TRIAL_LIMIT = 20;
 const LIMITED_TRANSACTION_TYPES = ["buy", "sell", "debt", "credit"];
@@ -178,25 +181,23 @@ function calculateTotal() {
     }
 }
 
-weightInput.addEventListener("input", calculateTotal);
-
-priceInput.addEventListener("input", function (e) {
-    const raw = parseInputNumber(e.target.value);
-
-    if (raw !== 0) {
-        e.target.value = raw.toLocaleString("en-US");
-    }
-
+weightInput.addEventListener("input", function (e) {
+    e.target.value = toPersianDigits(toEnglishDigits(e.target.value));
     calculateTotal();
 });
 
-paidAmountInput.addEventListener("input", function () {
-    const raw = parseInputNumber(this.value);
 
-    if (raw !== 0) {
-        this.value = raw.toLocaleString("en-US");
-    }
+priceInput.addEventListener("input", function (e) {
+    e.target.value = formatDisplayNumber(e.target.value);
+    calculateTotal();
 });
+
+
+paidAmountInput.addEventListener("input", function (e) {
+    e.target.value = formatDisplayNumber(e.target.value);
+});
+
+
 
 typeSelect.addEventListener("change", function () {
     updatePaidLabel();
@@ -941,5 +942,13 @@ window.addEventListener("load", async () => {
 
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("service-worker.js");
+    }
+});
+// برای اینکه بقیه فیلدها هم در آیفون فارسی بمانند (بدون هزارگان)
+[bagCountInput, ounceInput, dahanbastInput, gradeInput].forEach(input => {
+    if(input) {
+        input.addEventListener("input", function(e) {
+            e.target.value = toPersianDigits(toEnglishDigits(e.target.value));
+        });
     }
 });

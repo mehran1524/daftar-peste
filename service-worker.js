@@ -1,9 +1,8 @@
 /* ================================
    Service Worker - Pistachio App
-   Version: 1.1
    ================================ */
 
-const CACHE_NAME = "pistachio-ledger-v1.4"; 
+const CACHE_NAME = "pistachio-ledger-v1.5";
 
 const ASSETS = [
   "./",
@@ -13,7 +12,7 @@ const ASSETS = [
   "./style.css",
   "./app.js",
   "./ledger.js",
-  "./utils.js", // حتماً فایل جدید را اینجا اضافه کن
+  "./utils.js",
   "./db.js",
   "./backup.js",
   "./manifest.json",
@@ -62,7 +61,8 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME)
+        keys
+          .filter((key) => key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       );
     })
@@ -70,28 +70,33 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// استراتژی شبکه اول (Network First) برای آپدیت سریع‌تر
+// استراتژی کش اول (Cache First)
 self.addEventListener("fetch", (event) => {
   const request = event.request;
 
   if (!canHandleRequest(request)) return;
 
   event.respondWith(
-    fetch(request)
-      .then((networkResponse) => {
-        if (canCacheResponse(networkResponse)) {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseClone);
-          });
-        }
-        return networkResponse;
-      })
-      .catch(() => {
-        return caches.match(request).then((cachedResponse) => {
-          if (cachedResponse) return cachedResponse;
-          if (request.mode === "navigate") return caches.match("./index.html");
+    caches.match(request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      return fetch(request)
+        .then((networkResponse) => {
+          if (canCacheResponse(networkResponse)) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseClone);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          if (request.mode === "navigate") {
+            return caches.match("./index.html");
+          }
         });
-      })
+    })
   );
 });

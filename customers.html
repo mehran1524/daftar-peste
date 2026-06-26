@@ -188,6 +188,10 @@ function toPersianDigits(num){
 return num.toString().replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);
 }
 
+function toEnglishDigits(str){
+return String(str).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+}
+
 function goBack(){
 window.location.href="index.html";
 }
@@ -195,7 +199,7 @@ window.location.href="index.html";
 async function saveCustomer(){
 
 const name=document.getElementById("customerName").value.trim();
-const phone=document.getElementById("customerPhone").value.trim();
+const phone=toEnglishDigits(document.getElementById("customerPhone").value).replace(/\D/g,"").slice(0,11);
 
 if(!name){
 alert("نام مشتری الزامی است");
@@ -217,7 +221,7 @@ function startEdit(customer){
 editingCustomerId=customer.id;
 
 document.getElementById("customerName").value=customer.name;
-document.getElementById("customerPhone").value=customer.phone||"";
+document.getElementById("customerPhone").value=customer.phone ? toPersianDigits(customer.phone) : "";
 
 document.getElementById("submitBtn").innerText="ذخیره تغییرات";
 document.getElementById("cancelBtn").style.display="block";
@@ -297,7 +301,7 @@ div.innerHTML=`
 
 <div style="flex:1;">
 <div class="customer-name">${customer.name}</div>
-<small>${customer.phone || ""}</small>
+<small>${customer.phone ? toPersianDigits(customer.phone) : ""}</small>
 </div>
 
 <div class="${balanceClass}" style="text-align:left;">
@@ -337,6 +341,13 @@ await deleteCustomer(id);
 loadCustomers();
 
 }
+
+const customerPhoneInput=document.getElementById("customerPhone");
+
+customerPhoneInput.addEventListener("input",function(e){
+const englishValue=toEnglishDigits(e.target.value).replace(/\D/g,"").slice(0,11);
+e.target.value=toPersianDigits(englishValue);
+});
 
 window.addEventListener("load",loadCustomers);
 
