@@ -1,12 +1,13 @@
 /* ================================
    Service Worker - Pistachio App
+   Offline Only Cache Strategy
    ================================ */
 
-const CACHE_NAME = "pistachio-ledger-v2.3";
+const CACHE_NAME = "pistachio-ledger-v2.4";
 
 const HTML2PDF_CDN = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
 
-const CORE_ASSETS = [
+const APP_ASSETS = [
   "./",
   "./index.html",
   "./customers.html",
@@ -19,10 +20,7 @@ const CORE_ASSETS = [
   "./backup.js",
   "./manifest.json",
   "./icons/iconapp192.png",
-  "./icons/iconapp512.png"
-];
-
-const OPTIONAL_ASSETS = [
+  "./icons/iconapp512.png",
   HTML2PDF_CDN
 ];
 
@@ -30,12 +28,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
-
-      await cache.addAll(CORE_ASSETS);
-
-      await Promise.allSettled(
-        OPTIONAL_ASSETS.map((asset) => cache.add(asset))
-      );
+      await cache.addAll(APP_ASSETS);
     })()
   );
 
@@ -65,60 +58,41 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  const url = new URL(request.url);
-
   event.respondWith(
     (async () => {
-      const cache = await caches.open(CACHE_NAME);
+      const cachedResponse = await caches.match(request);
 
-      try {
-        const networkResponse = await fetch(request);
-
-        if (
-          networkResponse &&
-          networkResponse.ok &&
-          (url.origin === self.location.origin || request.url === HTML2PDF_CDN)
-        ) {
-          await cache.put(request, networkResponse.clone());
-        }
-
-        return networkResponse;
-      } catch (error) {
-        const cachedResponse = await cache.match(request);
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        if (request.url === HTML2PDF_CDN) {
-          const cdnResponse = await cache.match(HTML2PDF_CDN);
-          if (cdnResponse) {
-            return cdnResponse;
-          }
-        }
-
-        if (request.mode === "navigate") {
-          if (url.pathname.endsWith("/customer-ledger.html")) {
-            const page = await cache.match("./customer-ledger.html");
-            if (page) {
-              return page;
-            }
-          }
-
-          if (url.pathname.endsWith("/customers.html")) {
-            const page = await cache.match("./customers.html");
-            if (page) {
-              return page;
-            }
-          }
-
-          const homePage = await cache.match("./index.html");
-          if (homePage) {
-            return homePage;
-          }
-        }
-
-        return Response.error();
+      if (cachedResponse) {
+        return cachedResponse;
       }
+
+      if (request.url === HTML2PDF_CDN) {
+        const cdnResponse = await caches.match(HTML2PDF_CDN);
+        if (cdnResponse) {
+          return cdnResponse;
+        }
+      }
+
+      if (request.mode === "navigate") {
+        if (request.url.includes("customer-ledger.html")) {
+          const page = await caches.match("./customer-ledger.html");
+          if (page) return page;
+        }
+
+        if (request.url.includes("customers.html")) {
+          const page = await caches.match("./customers.html");
+          if (page) return page;
+        }
+
+        const homePage = await caches.match("./index.html");
+        if (homePage) return homePage;
+      }
+
+      return new Response("Offline - file not found in cache", {
+        status: 404,
+        statusText: "Not Found",
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      });
     })()
   );
 });
