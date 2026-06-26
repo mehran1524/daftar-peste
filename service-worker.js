@@ -2,7 +2,7 @@
    Service Worker - Pistachio App
    ================================ */
 
-const CACHE_NAME = "pistachio-ledger-v1.5";
+const CACHE_NAME = "pistachio-ledger-v1.8";
 
 const ASSETS = [
   "./",
@@ -19,34 +19,6 @@ const ASSETS = [
   "./icons/iconapp192.png",
   "./icons/iconapp512.png"
 ];
-
-function isHttpRequest(request) {
-  return request.url.startsWith("http://") || request.url.startsWith("https://");
-}
-
-function isSameOriginRequest(request) {
-  try {
-    const requestUrl = new URL(request.url);
-    return requestUrl.origin === self.location.origin;
-  } catch (error) {
-    return false;
-  }
-}
-
-function canHandleRequest(request) {
-  if (!request) return false;
-  if (request.method !== "GET") return false;
-  if (!isHttpRequest(request)) return false;
-  if (!isSameOriginRequest(request)) return false;
-  return true;
-}
-
-function canCacheResponse(response) {
-  if (!response) return false;
-  if (response.status !== 200) return false;
-  if (response.type !== "basic") return false;
-  return true;
-}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -70,33 +42,26 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// استراتژی کش اول (Cache First)
 self.addEventListener("fetch", (event) => {
-  const request = event.request;
-
-  if (!canHandleRequest(request)) return;
+  const url = new URL(event.request.url);
 
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
+    caches.match(event.request).then((response) => {
+      if (response) return response;
+
+      if (event.request.mode === "navigate") {
+        if (url.pathname.endsWith("/customer-ledger.html")) {
+          return caches.match("./customer-ledger.html");
+        }
+
+        if (url.pathname.endsWith("/customers.html")) {
+          return caches.match("./customers.html");
+        }
+
+        return caches.match("./index.html");
       }
 
-      return fetch(request)
-        .then((networkResponse) => {
-          if (canCacheResponse(networkResponse)) {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          if (request.mode === "navigate") {
-            return caches.match("./index.html");
-          }
-        });
+      return Response.error();
     })
   );
 });
