@@ -2,7 +2,7 @@
    Service Worker - Pistachio App
    ================================ */
 
-const CACHE_NAME = "pistachio-ledger-v2.2";
+const CACHE_NAME = "pistachio-ledger-v2.3";
 
 const HTML2PDF_CDN = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
 
