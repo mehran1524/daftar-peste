@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارش دوره‌ای معاملات</title>
+
+    <!-- افزودن استایل تقویم شمسی جهت جلوگیری از رندر نامناسب و به هم ریختگی -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker/dist/css/persian-datepicker.css">
+
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --danger: #d32f2f;
+            --warning: #f57c00;
+            --border: #e0e0e0;
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #222;
+            --muted: #666;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 16px 40px;
+        }
+
+        .report-header {
+            background: linear-gradient(135deg, #1b5e20, #43a047);
+            color: #fff;
+            padding: 22px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            margin-bottom: 18px;
+        }
+
+        .report-header h1 {
+            margin: 0 0 8px;
+            font-size: 24px;
+        }
+
+        .report-header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 14px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-light {
+            background: #fff;
+            color: #1b5e20;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.75);
+        }
+
+        .filters-card,
+        .summary-card,
+        .table-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            margin-bottom: 18px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(160px, 1fr));
+            gap: 12px;
+            align-items: end;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+
+        .summary-box {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fafafa;
+        }
+
+        .summary-box .title {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .summary-box .value {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .text-green {
+            color: var(--primary);
+        }
+
+        .text-red {
+            color: var(--danger);
+        }
+
+        .text-orange {
+            color: var(--warning);
+        }
+
+        .report-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+            /* محدود کردن استایل‌ها به جدول معاملات برای جلوگیری از تداخل با تقویم */
+        .table-wrapper table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 980px;
+        }
+
+        .table-wrapper thead {
+            background: #f1f8e9;
+        }
+
+        .table-wrapper th,
+        .table-wrapper td {
+            border: 1px solid var(--border);
+            padding: 9px 8px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .table-wrapper th {
+            color: #1b5e20;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .table-wrapper td.description-cell {
+            text-align: right;
+            min-width: 220px;
+        }
+
+        /* ریست و ایمن‌سازی کامل تقویم شمسی */
+        .datepicker-plot-area {
+            box-sizing: content-box !important;
+        }
+
+        .datepicker-plot-area table {
+            min-width: unset !important;
+            width: 100% !important;
+            border-collapse: collapse !important;
+            border: none !important;
+        }
+
+        .datepicker-plot-area th, 
+        .datepicker-plot-area td {
+            border: none !important;
+            padding: 0 !important;
+            min-width: unset !important;
+            background: transparent !important;
+        }
+
+
+        .empty-state {
+            text-align: center;
+            padding: 35px 10px;
+            color: var(--muted);
+            font-weight: bold;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-buy {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .badge-sell {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-debt {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .badge-credit {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        @media (max-width: 1000px) {
+            .filters-grid {
+                grid-template-columns: repeat(2, minmax(150px, 1fr));
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .filters-grid,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .report-header h1 {
+                font-size: 20px;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .page {
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .filters-card,
+            .toolbar,
+            .btn {
+                display: none !important;
+            }
+
+            .report-header {
+                box-shadow: none;
+                border-radius: 0;
+                background: #fff !important;
+                color: #000;
+                border-bottom: 2px solid #000;
+            }
+
+            .summary-card,
+            .table-card {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 10px 0;
+            }
+
+            table {
+                min-width: 100%;
+            }
+
+            th,
+            td {
+                font-size: 11px;
+                padding: 5px;
+            }
+        }
+
+        /* استایل‌های کمکی جهت ریسپانسیو و جلوگیری از به هم ریختگی صفحه در موبایل */
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .datepicker-container {
+            z-index: 100000 !important;
+        }
+
+        @media (max-width: 768px) {
+            .datepicker-plot-area {
+                width: 290px !important;
+                font-size: 11px !important;
+            }
+            .datepicker-plot-area * {
+                font-size: 11px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <header class="report-header">
+        <h1>گزارش دوره‌ای معاملات</h1>
+        <p>
+            نمایش کامل معاملات بین دو تاریخ همراه با تراز مالی، فیلتر نوع معامله و فیلتر مشتری
+        </p>
+
+        <div class="toolbar">
+            <a href="index.html" class="btn btn-light">بازگشت به دفتر حساب</a>
+            <button id="printReportBtn" class="btn btn-outline" type="button">چاپ گزارش</button>
+            <button id="resetFiltersBtn" class="btn btn-outline" type="button">حذف فیلترها</button>
+        </div>
+    </header>
+
+    <section class="filters-card">
+        <div class="filters-grid">
+
+            <div class="field">
+                <label for="fromDate">از تاریخ</label>
+                <!-- اعمال ساختار و کلاس‌های مشابه dueDate در ایندکس جهت کارکرد صحیح در موبایل -->
+                <input type="text" id="fromDate" placeholder="انتخاب تاریخ" autocomplete="off" readonly style="background: #fff; cursor: pointer;">
+            </div>
+
+            <div class="field">
+                <label for="toDate">تا تاریخ</label>
+                <!-- اعمال ساختار و کلاس‌های مشابه dueDate در ایندکس جهت کارکرد صحیح در موبایل -->
+                <input type="text" id="toDate" placeholder="انتخاب تاریخ" autocomplete="off" readonly style="background: #fff; cursor: pointer;">
+            </div>
+
+            <div class="field">
+                <label for="typeFilter">نوع معامله</label>
+                <select id="typeFilter">
+                    <option value="all">همه معاملات</option>
+                    <option value="buy">خرید</option>
+                    <option value="sell">فروش</option>
+                    <option value="debt">بدهی / پرداخت </option>
+                    <option value="credit">طلب / دریافت </option>
+                </select>
+            </div>
+
+           <div class="field">
+    <label for="customerFilter">نام مشتری</label>
+    <select id="customerFilter">
+        <option value="">همه مشتری‌ها</option>
+    </select>
+</div>
+
+
+            <div class="field">
+                <button id="generateReportBtn" class="btn btn-primary" type="button" style="width:100%;">
+                    تولید گزارش
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="summary-card">
+        <div class="report-meta">
+            <div id="reportRangeLabel">بازه گزارش: -</div>
+            <div id="reportGeneratedAt">زمان تولید گزارش: -</div>
+        </div>
+
+             <div class="summary-grid">
+
+            <div class="summary-box">
+                <div class="title">تراز مالی بازه</div>
+                <div id="rangeBalance" class="value">۰</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="title">جمع خرید</div>
+                <div id="totalBuy" class="value text-red">۰</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="title">جمع فروش</div>
+                <div id="totalSell" class="value text-green">۰</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="title">جمع بدهی / پرداختی</div>
+                <div id="totalDebt" class="value text-red">۰</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="title">جمع طلب / دریافتی</div>
+                <div id="totalCredit" class="value text-green">۰</div>
+            </div>
+
+            <!-- کادرهای جدید مجموع عدل -->
+            <div class="summary-box">
+                <div class="title">مجموع عدل خرید شده</div>
+                <div id="totalBuyBags" class="value text-red" style="font-size: 18px;">۰ عدل</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="title">مجموع عدل فروخت شده</div>
+                <div id="totalSellBags" class="value text-green" style="font-size: 18px;">۰ عدل</div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="table-card">
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>تاریخ</th>
+                        <th>ساعت</th>
+                        <th>نوع</th>
+                        <th>مشتری</th>
+                        <th>دسته</th>
+                        <th>نوع پسته</th>
+                        <th>وزن</th>
+                        <th>فی</th>
+                        <th>مبلغ معامله</th>
+                        <th>مبلغ پرداختی/دریافتی</th>
+                        <th>مانده</th>
+                        <th>جزئیات</th>
+                    </tr>
+                </thead>
+
+                <tbody id="reportTableBody">
+                    <tr>
+                        <td colspan="13" class="empty-state">
+                            برای مشاهده گزارش، بازه تاریخ را انتخاب کنید.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<script src="db.js"></script>
+<script src="customers.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-date/dist/persian-date.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker/dist/js/persian-datepicker.js"></script>
+
+<script type="module" src="report.js"></script>
+
+<!-- اعمال کد راه‌اندازی درست برای فیلدهای از تاریخ و تا تاریخ مشابه فایل ایندکس -->
+
+</body>
+</html>

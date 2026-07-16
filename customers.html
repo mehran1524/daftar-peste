@@ -47,12 +47,13 @@ margin-bottom:15px;
 box-shadow:0 2px 6px rgba(0,0,0,0.08);
 }
 
-input{
+input, select{
 width:100%;
 padding:8px;
 margin-top:6px;
 border-radius:8px;
 border:1px solid #ddd;
+box-sizing: border-box;
 }
 
 .btn-primary{
@@ -133,6 +134,148 @@ cursor:pointer;
 margin-top:4px;
 margin-left:4px;
 }
+
+/* استایل هشدار سررسید (بدون تغییر) */
+.alert-card {
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(211, 47, 47, 0.15);
+}
+.alert-card-title {
+  color: #c62828;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.alert-item-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 1px solid #ffcdd2;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: #333;
+  font-size: 13px;
+  cursor: pointer;
+}
+.alert-item-name { font-weight: bold; color: #c62828; }
+.alert-item-days {
+  font-size: 11px;
+  background: #c62828;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+/* استایل جدید فرم */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+.form-row input, .form-row select { margin-top: 0; }
+
+.bank-section{
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #e0e0e0;
+}
+
+.bank-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 5px;
+}
+
+.bank-title{ font-weight:bold; color:#1976d2; font-size:14px; }
+
+.btn-add-bank{
+  background:#e3f2fd;
+  color:#1976d2;
+  border:1px solid #bbdefb;
+  padding:6px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+  font-family:inherit;
+}
+
+.bank-entry-card {
+  background: #fdfdfd;
+  border: 1px solid #eee;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  position: relative;
+}
+
+/* اصلاح چیدمان شبا برای چپ‌چین بودن */
+.sheba-container {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 8px;
+  direction: ltr; /* چپ به راست برای شماره شبا */
+}
+
+.sheba-prefix-label {
+  background: #eee;
+  padding: 8px 12px;
+  border-radius: 8px 0 0 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-right: none;
+}
+.card-number{
+  text-align: left;
+  direction: ltr;
+  letter-spacing: 1px;
+}
+
+.sheba-number {
+  border-radius: 0 8px 8px 0 !important;
+  text-align: left;
+  letter-spacing: 1px;
+  margin-top: 0 !important;
+}
+
+.remove-bank-btn {
+  background: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+}
+
+@media(max-width:480px){
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 </style>
 </head>
 
@@ -145,26 +288,34 @@ margin-left:4px;
 
 <div class="container">
 
+<!-- بخش هشدار (بدون تغییر) -->
+<div class="alert-card" id="dueAlertCard" style="display:none;">
+  <div class="alert-card-title">
+    <span>⚠️ سررسیدهای نزدیک (۳ روز یا کمتر)</span>
+  </div>
+  <div id="dueAlertList"></div>
+</div>
+
 <div class="card">
 <h3 id="formTitle">ثبت مشتری جدید</h3>
-
 <input type="hidden" id="editId"/>
 
-<input type="text" id="customerName" placeholder="نام مشتری"/>
-<input
-  type="tel"
-  id="customerPhone"
-  placeholder="موبایل"
-  maxlength="11"
-  pattern="[0-9۰-۹]{11}"
-  inputmode="numeric"
-/>
+<!-- ردیف اول: نام و موبایل -->
+<div class="form-row">
+  <input type="text" id="customerName" placeholder="نام مشتری"/>
+  <input type="tel" id="customerPhone" placeholder="موبایل" maxlength="11" inputmode="numeric"/>
+</div>
 
+<div class="bank-section" id="bankSection">
+  <div class="bank-header">
+    <span class="bank-title">حساب‌های بانکی</span>
+    <button type="button" class="btn-add-bank" onclick="addBankRow()">+ افزودن مشخصات حساب</button>
+  </div>
+  <div id="bankRows"></div>
+</div>
 
 <button id="submitBtn" class="btn-primary" onclick="saveCustomer()">ثبت مشتری</button>
-
 <button id="cancelBtn" class="btn-cancel" style="display:none;" onclick="cancelEdit()">انصراف از ویرایش</button>
-
 </div>
 
 <div class="card">
@@ -181,177 +332,325 @@ margin-left:4px;
 <script src="db.js"></script>
 
 <script>
+let editingCustomerId = null;
 
-let editingCustomerId=null;
+const IRAN_BANKS = [
+  { code: "011", name: "بانک صنعت و معدن" },
+  { code: "012", name: "بانک ملت" }, { code: "013", name: "بانک رفاه کارگران" },
+  { code: "014", name: "بانک مسکن" }, { code: "015", name: "بانک سپه" },
+  { code: "016", name: "بانک کشاورزی" }, { code: "017", name: "بانک ملی ایران" },
+  { code: "018", name: "بانک تجارت" }, { code: "019", name: "بانک صادرات ایران" },
+  { code: "021", name: "پست بانک ایران" }, { code: "054", name: "بانک پارسیان" },
+  { code: "055", name: "بانک اقتصاد نوین" }, { code: "056", name: "بانک سامان" },
+  { code: "057", name: "بانک پاسارگاد" }, { code: "058", name: "بانک سرمایه" },
+  { code: "059", name: "بانک سینا" }, { code: "060", name: "بانک قرض‌الحسنه مهر ایران" },
+  { code: "070", name: "بانک رسالت" }, { code: "062", name: "بانک آینده" }
+];
 
-function toPersianDigits(num){
-return num.toString().replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);
+function buildBankOptions(selectedCode = "") {
+  const arr = ['<option value="">انتخاب بانک...</option>'];
+  IRAN_BANKS.forEach(b => {
+    const sel = selectedCode == b.code ? "selected" : "";
+    arr.push(`<option value="${b.code}" ${sel}>${b.name}</option>`);
+  });
+  return arr.join("");
 }
 
-function toEnglishDigits(str){
-return String(str).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+function toPersianDigits(num) { return String(num).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]); }
+function toEnglishDigits(str) { return String(str).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)); }
+
+function formatGroupedDigits(value, groupSize = 4, maxDigits = 24) {
+  const digits = toEnglishDigits(value).replace(/\D/g, "").slice(0, maxDigits);
+  const groups = [];
+  for (let i = 0; i < digits.length; i += groupSize) {
+    groups.push(digits.slice(i, i + groupSize));
+  }
+  return groups.join("-");
 }
 
-function goBack(){
-window.location.href="index.html";
+function handleGroupedInput(input, groupSize = 4, maxDigits = 24) {
+  input.value = formatGroupedDigits(input.value, groupSize, maxDigits);
 }
 
-async function saveCustomer(){
+function addBankRow(initial = null) {
+  const bankRows = document.getElementById("bankRows");
+  const rowId = "row_" + Date.now();
+  const bankCode = initial?.bankCode || "";
+  const shebaNum = formatGroupedDigits(initial?.shebaNumber || "", 4, 24);
+  const ownerName = initial?.ownerName || "";
+  const cardNumber = formatGroupedDigits(initial?.cardNumber || "", 4, 16);
 
-const name=document.getElementById("customerName").value.trim();
-const phone=toEnglishDigits(document.getElementById("customerPhone").value).replace(/\D/g,"").slice(0,11);
+  const div = document.createElement("div");
+  div.className = "bank-entry-card";
+  div.dataset.rowId = rowId;
 
-if(!name){
-alert("نام مشتری الزامی است");
-return;
+  div.innerHTML = `
+    <button class="remove-bank-btn" type="button" onclick="this.parentElement.remove()">×</button>
+    <div class="form-row" style="padding-left: 35px;">
+      <input class="owner-name" type="text" value="${ownerName}" placeholder="نام صاحب حساب"/>
+      <select class="bank-select">${buildBankOptions(bankCode)}</select>
+    </div>
+    <div class="sheba-container">
+      <span class="sheba-prefix-label">IR</span>
+      <input class="sheba-number" type="text" value="${shebaNum}" placeholder="1234-5678-9012-3456-7890-12" maxlength="29" inputmode="numeric" oninput="handleGroupedInput(this, 4, 24)"/>
+    </div>
+    <div style="margin-top:8px;">
+      <input class="card-number" type="text" value="${cardNumber}" placeholder="1234-5678-9012-3456" maxlength="19" inputmode="numeric" oninput="handleGroupedInput(this, 4, 16)"/>
+    </div>
+  `;
+  bankRows.appendChild(div);
 }
 
-if(editingCustomerId){
-await updateCustomer(editingCustomerId,{name,phone});
-}else{
-await addCustomer({name,phone});
+function collectBankAccountsFromForm() {
+  const rows = Array.from(document.querySelectorAll(".bank-entry-card"));
+
+  return rows.map(r => {
+    const bankCode = r.querySelector(".bank-select").value;
+    const shebaNumber = toEnglishDigits(r.querySelector(".sheba-number").value)
+      .replace(/\D/g, "")
+      .slice(0, 24);
+    const ownerName = r.querySelector(".owner-name").value.trim();
+    const cardNumber = toEnglishDigits(r.querySelector(".card-number")?.value || "")
+      .replace(/\D/g, "")
+      .slice(0, 16);
+
+    return { bankCode, shebaNumber, ownerName, cardNumber };
+  }).filter(x => x.bankCode || x.shebaNumber || x.ownerName || x.cardNumber);
 }
 
-resetForm();
-loadCustomers();
+function fillBankAccountsInForm(customer) {
+  const bankRows = document.getElementById("bankRows");
+  bankRows.innerHTML = "";
+  const list = Array.isArray(customer.bankAccounts) ? customer.bankAccounts : [];
+  list.forEach(acc => addBankRow(acc));
 }
 
-function startEdit(customer){
+function goBack() { window.location.href = "index.html"; }
 
-editingCustomerId=customer.id;
-
-document.getElementById("customerName").value=customer.name;
-document.getElementById("customerPhone").value=customer.phone ? toPersianDigits(customer.phone) : "";
-
-document.getElementById("submitBtn").innerText="ذخیره تغییرات";
-document.getElementById("cancelBtn").style.display="block";
-
-document.getElementById("formTitle").innerText="ویرایش مشتری";
-
-window.scrollTo({top:0,behavior:"smooth"});
+async function saveCustomer() {
+  const name = document.getElementById("customerName").value.trim();
+  const phone = toEnglishDigits(document.getElementById("customerPhone").value).replace(/\D/g, "").slice(0, 11);
+  if (!name) { alert("نام مشتری الزامی است"); return; }
+  const bankAccounts = collectBankAccountsFromForm();
+  if (editingCustomerId) { await updateCustomer(editingCustomerId, { name, phone, bankAccounts });
+  } else { await addCustomer({ name, phone, bankAccounts }); }
+  resetForm(); await loadCustomers(); await checkAndRenderDueAlerts();
 }
 
-function cancelEdit(){
-resetForm();
+function startEdit(customer) {
+  editingCustomerId = customer.id;
+  document.getElementById("customerName").value = customer.name;
+  document.getElementById("customerPhone").value = customer.phone ? toPersianDigits(customer.phone) : "";
+  fillBankAccountsInForm(customer);
+  document.getElementById("submitBtn").innerText = "ذخیره تغییرات";
+  document.getElementById("cancelBtn").style.display = "block";
+  document.getElementById("formTitle").innerText = "ویرایش مشتری";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+async function openCustomerFormFromSession() {
+  const shouldOpen = sessionStorage.getItem("openCustomerAccountForm");
+  const selectedCustomerId = sessionStorage.getItem("selectedCustomerId");
+
+  if (shouldOpen !== "1" || !selectedCustomerId) return;
+
+  sessionStorage.removeItem("openCustomerAccountForm");
+  sessionStorage.removeItem("selectedCustomerId");
+
+  const customers = await getAllCustomers();
+  const customer = customers.find(c => String(c.id) === String(selectedCustomerId));
+
+  if (!customer) {
+    alert("مشتری انتخاب‌شده پیدا نشد.");
+    return;
+  }
+
+  startEdit(customer);
 }
 
-function resetForm(){
+function cancelEdit() { resetForm(); }
 
-editingCustomerId=null;
-
-document.getElementById("customerName").value="";
-document.getElementById("customerPhone").value="";
-
-document.getElementById("submitBtn").innerText="ثبت مشتری";
-document.getElementById("cancelBtn").style.display="none";
-document.getElementById("formTitle").innerText="ثبت مشتری جدید";
-
+function resetForm() {
+  editingCustomerId = null;
+  document.getElementById("customerName").value = "";
+  document.getElementById("customerPhone").value = "";
+  document.getElementById("bankRows").innerHTML = "";
+  document.getElementById("submitBtn").innerText = "ثبت مشتری";
+  document.getElementById("cancelBtn").style.display = "none";
+  document.getElementById("formTitle").innerText = "ثبت مشتری جدید";
 }
 
-async function calculateCustomerBalance(customerId){
-
-const transactions=await getTransactionsByCustomer(customerId);
-
-const balance=transactions.reduce((sum,t)=>{
-return sum + Number(t.amount);
-},0);
-
-return balance;
+async function calculateCustomerBalance(customerId) {
+  const transactions = await getTransactionsByCustomer(customerId);
+  return transactions.reduce((sum, t) => {
+    const amount = Number(t.amount || 0);
+    const paidAmount = Number(t.paidAmount || 0);
+    let delta = 0;
+    if (t.type === "buy") delta = amount - paidAmount;
+    else if (t.type === "sell") delta = -amount + paidAmount;
+    else if (t.type === "debt") delta = -paidAmount;
+    else if (t.type === "credit") delta = paidAmount;
+    return sum + delta;
+  }, 0);
 }
 
-async function loadCustomers(){
-
-const listEl=document.getElementById("customersList");
-const searchValue=document.getElementById("searchInput").value.trim();
-
-listEl.innerHTML="";
-
-const customers=await getAllCustomers();
-
-for(let customer of customers){
-
-if(searchValue && !customer.name.includes(searchValue)) continue;
-
-const balance=await calculateCustomerBalance(customer.id);
-
-const div=document.createElement("div");
-
-div.className="customer-item";
-
-div.onclick=()=>{
-window.location.href=`customer-ledger.html?id=${customer.id}`;
-};
-
-let balanceClass="";
-let statusText="";
-
-if(balance<0){
-balanceClass="balance-red";
-statusText="بدهکار";
-}
-else if(balance>0){
-balanceClass="balance-green";
-statusText="بستانکار";
+/* توابع تاریخ و هشدارها (بدون تغییر) */
+function jalaliToGregorian(jy, jm, jd) {
+  jy = Number(jy); jm = Number(jm); jd = Number(jd);
+  const breaks = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178];
+  let gy = jy + 621, leapJ = -14, jp = breaks[0], jump = 0;
+  for (let i = 1; i < breaks.length; i++) {
+    const jmBreak = breaks[i]; jump = jmBreak - jp;
+    if (jy < jmBreak) break;
+    leapJ += Math.floor(jump / 33) * 8 + Math.floor((jump % 33) / 4);
+    jp = jmBreak;
+  }
+  let n = jy - jp; leapJ += Math.floor(n / 33) * 8 + Math.floor(((n % 33) + 3) / 4);
+  if ((jump % 33) === 4 && jump - n === 4) leapJ += 1;
+  const leapG = Math.floor(gy / 4) - Math.floor((Math.floor(gy / 100) + 1) * 3 / 4) - 150;
+  const march = 20 + leapJ - leapG;
+  const dayOfYear = jm <= 6 ? (jm - 1) * 31 + jd : 186 + (jm - 7) * 30 + jd;
+  const gregorianDate = new Date(gy, 2, march);
+  gregorianDate.setDate(gregorianDate.getDate() + dayOfYear - 1);
+  return { gy: gregorianDate.getFullYear(), gm: gregorianDate.getMonth() + 1, gd: gregorianDate.getDate() };
 }
 
-let balanceText=Math.abs(balance).toLocaleString();
-balanceText=toPersianDigits(balanceText);
-
-div.innerHTML=`
-
-<div style="flex:1;">
-<div class="customer-name">${customer.name}</div>
-<small>${customer.phone ? toPersianDigits(customer.phone) : ""}</small>
-</div>
-
-<div class="${balanceClass}" style="text-align:left;">
-
-${balanceText}
-
-${statusText ? `<span class="status-text">${statusText}</span>` : ""}
-
-<br>
-
-<button class="edit-btn"
-onclick='event.stopPropagation(); startEdit(${JSON.stringify(customer)})'>
-ویرایش
-</button>
-
-<button class="delete-btn"
-onclick="event.stopPropagation(); removeCustomer(${customer.id})">
-حذف
-</button>
-
-</div>
-
-`;
-
-listEl.appendChild(div);
-
+function parseDueDateToDate(dueDate) {
+  if (!dueDate) return null;
+  const normalized = toEnglishDigits(String(dueDate).trim()).replace(/\//g, "-").replace(/\./g, "-");
+  const parts = normalized.split("-").map(Number);
+  if (parts.length !== 3 || parts.some(isNaN)) return null;
+  const [year, month, day] = parts;
+  if (year < 1700) { const g = jalaliToGregorian(year, month, day); return new Date(g.gy, g.gm - 1, g.gd); }
+  return new Date(year, month - 1, day);
 }
 
+function diffDaysFromToday(targetDate) {
+  if (!targetDate || isNaN(targetDate.getTime())) return null;
+  const today = new Date();
+  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const targetOnly = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+  return Math.round((targetOnly - todayOnly) / 86400000);
 }
 
-async function removeCustomer(id){
+async function getNearestDueTransaction(customerId) {
+  const transactions = await getTransactionsByCustomer(customerId);
 
-if(!confirm("آیا از حذف این مشتری مطمئن هستید؟")) return;
+  const dueTransactions = transactions.filter(t => {
+    if (!t.dueDate) return false;
+    return (Number(t.amount || 0) - Number(t.paidAmount || 0)) > 0;
+  });
 
-await deleteCustomer(id);
+  if (!dueTransactions.length) return null;
 
-loadCustomers();
+  const upcomingDueTransactions = dueTransactions
+    .map(t => {
+      const dueDateObj = parseDueDateToDate(t.dueDate);
+      const diffDays = diffDaysFromToday(dueDateObj);
 
+      return {
+        transaction: t,
+        dueDateObj,
+        diffDays
+      };
+    })
+    .filter(item => item.dueDateObj && item.diffDays !== null && item.diffDays >= 0)
+    .sort((a, b) => a.dueDateObj - b.dueDateObj);
+
+  if (!upcomingDueTransactions.length) {
+    return null;
+  }
+
+  return upcomingDueTransactions[0].transaction;
 }
 
-const customerPhoneInput=document.getElementById("customerPhone");
 
-customerPhoneInput.addEventListener("input",function(e){
-const englishValue=toEnglishDigits(e.target.value).replace(/\D/g,"").slice(0,11);
-e.target.value=toPersianDigits(englishValue);
+async function checkAndRenderDueAlerts() {
+  const alertCard = document.getElementById("dueAlertCard");
+  const alertList = document.getElementById("dueAlertList");
+  alertList.innerHTML = "";
+  const customers = await getAllCustomers();
+  let hasAlerts = false;
+
+  for (const customer of customers) {
+    const nearestDue = await getNearestDueTransaction(customer.id);
+    if (!nearestDue) continue;
+
+    const dueDateObj = parseDueDateToDate(nearestDue.dueDate);
+    const diffDays = diffDaysFromToday(dueDateObj);
+
+    // بررسی اینکه آیا سررسید در محدوده ۳ روز است
+    if (diffDays !== null && diffDays >= 0 && diffDays <= 3) {
+      const balance = await calculateCustomerBalance(customer.id);
+
+      // اگر بالانس صفر است، مشتری را در لیست هشدار نمایش نده
+      if (Number(balance) === 0) continue;
+
+      hasAlerts = true;
+
+      const statusLabel = diffDays === 0 ? "امروز" : `${toPersianDigits(diffDays)} روز مانده`;
+
+      // تعیین رنگ و وضعیت بر اساس مثبت یا منفی بودن بالانس
+      const isPositive = balance > 0;
+      const amountColor = isPositive ? "#2e7d32" : "#d32f2f"; // سبز برای مثبت، قرمز برای منفی
+      const sign = isPositive ? "+" : "-";
+      const statusText = isPositive ? "بستانکار" : "بدهکار";
+
+      const itemDiv = document.createElement("div");
+      itemDiv.className = "alert-item-link";
+      itemDiv.onclick = () => window.location.href = `customer-ledger.html?id=${customer.id}`;
+      itemDiv.innerHTML = `
+        <div>
+          <span class="alert-item-name">${customer.name}</span>
+          <span style="color:${amountColor}; font-size:11px; margin-right:5px; font-weight:bold; direction:ltr; display:inline-block;">
+            ( ${sign}${toPersianDigits(Math.abs(balance).toLocaleString())} - ${statusText} )
+          </span>
+        </div>
+        <span class="alert-item-days">${statusLabel}</span>
+      `;
+
+      alertList.appendChild(itemDiv);
+    }
+  }
+  alertCard.style.display = hasAlerts ? "block" : "none";
+}
+
+async function loadCustomers() {
+  const listEl = document.getElementById("customersList");
+  const searchValue = document.getElementById("searchInput").value.trim();
+  listEl.innerHTML = "";
+  const customers = await getAllCustomers();
+  for (let customer of customers) {
+    if (searchValue && !customer.name.includes(searchValue)) continue;
+    const balance = await calculateCustomerBalance(customer.id);
+    const div = document.createElement("div");
+    div.className = "customer-item";
+    div.onclick = () => window.location.href = `customer-ledger.html?id=${customer.id}`;
+    let balanceClass = balance < 0 ? "balance-red" : (balance > 0 ? "balance-green" : "");
+    let statusText = balance < 0 ? "بدهکار" : (balance > 0 ? "بستانکار" : "");
+    div.innerHTML = `<div style="flex:1;"><div class="customer-name">${customer.name}</div><small>${customer.phone ? toPersianDigits(customer.phone) : ""}</small></div>
+      <div class="${balanceClass}" style="text-align:left;">${toPersianDigits(Math.abs(balance).toLocaleString())} ${statusText ? `<span class="status-text">${statusText}</span>` : ""}<br>
+      <button class="edit-btn" onclick='event.stopPropagation(); startEdit(${JSON.stringify(customer)})'>ویرایش</button>
+      <button class="delete-btn" onclick="event.stopPropagation(); removeCustomer(${customer.id})">حذف</button></div>`;
+    listEl.appendChild(div);
+  }
+}
+
+async function removeCustomer(id) {
+  if (!confirm("آیا از حذف این مشتری مطمئن هستید؟")) return;
+  await deleteCustomer(id); await loadCustomers(); await checkAndRenderDueAlerts();
+}
+
+document.getElementById("customerPhone").addEventListener("input", function(e) {
+  const englishValue = toEnglishDigits(e.target.value).replace(/\D/g, "").slice(0, 11);
+  e.target.value = toPersianDigits(englishValue);
 });
 
-window.addEventListener("load",loadCustomers);
+window.addEventListener("load", async () => {
+  await loadCustomers();
+  await checkAndRenderDueAlerts();
+  await openCustomerFormFromSession();
+});
 
 </script>
-
 </body>
 </html>

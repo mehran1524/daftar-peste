@@ -6,184 +6,777 @@
 <title>کاردکس مشتری</title>
 
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker/dist/css/persian-datepicker.css">
+
 
 <style>
+:root{
+  --primary:#1976d2;
+  --primary-dark:#1565c0;
+  --success:#2e7d32;
+  --danger:#d32f2f;
+  --warning:#f57c00;
+  --muted:#666;
+  --border:#e0e0e0;
+  --bg:#f4f6f8;
+  --card:#ffffff;
+  --head:#f1f8e9;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  font-family:Tahoma,Arial,sans-serif;
+  background:var(--bg);
+  color:#222;
+}
 
 .ledger-header{
-background:#1976d2;
-color:white;
-padding:15px;
-text-align:center;
-position:sticky;
-top:0;
-z-index:100;
-box-shadow:0 2px 5px rgba(0,0,0,0.2);
+  background:linear-gradient(135deg, #1976d2, #42a5f5);
+  color:white;
+  padding:16px;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,0.18);
 }
 
 .back-link{
-position:absolute;
-right:15px;
-top:15px;
-color:white;
-text-decoration:none;
-font-size:0.8rem;
-border:1px solid rgba(255,255,255,0.4);
-padding:2px 8px;
-border-radius:5px;
+  position:absolute;
+  right:15px;
+  top:15px;
+  color:white;
+  text-decoration:none;
+  font-size:0.85rem;
+  border:1px solid rgba(255,255,255,0.45);
+  padding:4px 10px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.08);
 }
 
-.ledger-label-row{
-display:flex;
-justify-content:space-between;
-padding:10px 5px;
-background:#f5f5f5;
-font-size:0.8rem;
-color:#666;
-font-weight:bold;
-border-bottom:1px solid #ddd;
+.back-link:hover{
+  background:rgba(255,255,255,0.16);
 }
 
-.ledger-row{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px 5px;
-border-bottom:1px solid #eee;
-font-size:0.9rem;
+#customerNameDisplay{
+  margin:0;
+  font-size:1.35rem;
 }
 
-.ledger-date{
-width:80px;
-color:#888;
-font-size:0.75rem;
-text-align:right;
+#customerPhoneDisplay{
+  display:block;
+  margin-top:6px;
+  font-size:0.9rem;
+  opacity:0.95;
 }
 
-.ledger-type{
-width:70px;
-text-align:center;
-font-weight:bold;
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:16px;
 }
 
-.ledger-total{
-width:120px;
-text-align:center;
-font-weight:bold;
-color:#333;
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
-.ledger-paid{
-width:120px;
-text-align:center;
-font-weight:bold;
-color:#1565c0;
+.section-title{
+  margin:0 0 12px;
+  font-size:1rem;
+  color:var(--primary-dark);
+  font-weight:bold;
 }
 
-.ledger-balance{
-width:120px;
-text-align:left;
-font-weight:bold;
+.bank-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:12px;
 }
 
-.balance-positive{
-color:#2e7d32;
+.bank-item{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  background:#fafafa;
 }
 
-.balance-negative{
-color:#c62828;
+.bank-row{
+  margin-bottom:8px;
+  font-size:14px;
+}
+
+.bank-row:last-child{
+  margin-bottom:0;
+}
+
+.bank-label{
+  color:var(--muted);
+  font-size:12px;
+  margin-left:6px;
+}
+
+.sheba-value{
+  direction:rtr;
+  text-align:left;
+  display:block;
+  letter-spacing:1px;
+  font-weight:bold;
+  color:#333;
+}
+.card-value {
+  direction: ltr;
+  text-align: left;
+  display: block;
+  font-weight: bold;
+  color: #333;
+  margin-right: auto;
+}
+
+.value-copy-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  background:#f0f4f8;
+  padding:4px 8px;
+  border-radius:8px;
+  margin-top:4px;
+  border:1px solid #e2e8f0;
+}
+
+.copy-btn {
+  border:none;
+  background:#1976d2;
+  color:#fff;
+  border-radius:6px;
+  padding:3px 8px;
+  cursor:pointer;
+  font-size:11px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:background 0.2s ease;
+  font-family:inherit;
+}
+
+.copy-btn:hover {
+  background:#1565c0;
+}
+
+.empty-note{
+  text-align:center;
+  color:var(--muted);
+  padding:14px;
+  border:1px dashed var(--border);
+  border-radius:12px;
+  background:#fafafa;
+  font-size:14px;
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(180px, 1fr));
+  gap:12px;
+}
+
+.summary-box{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  background:#fafafa;
+}
+
+.summary-box .title{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.summary-box .value{
+  font-size:20px;
+  font-weight:bold;
+}
+
+.text-green{
+  color:var(--success);
+}
+
+.text-red{
+  color:var(--danger);
+}
+
+.text-muted{
+  color:#555;
+}
+
+.balance-status{
+  display:block;
+  margin-top:6px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.table-card{
+  background:var(--card);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.08);
+}
+
+.table-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+
+.table-title{
+  margin:0;
+  font-size:1rem;
+  color:var(--primary-dark);
+}
+
+.table-meta{
+  font-size:13px;
+  color:var(--muted);
+}
+
+.table-wrapper{
+  overflow-x:auto;
+}
+
+.table-wrapper table{
+  width:100%;
+  min-width:1300px;
+  border-collapse:collapse;
+}
+
+.table-wrapper thead{
+  background:var(--head);
+}
+
+.table-wrapper th,
+.table-wrapper td{
+  border:1px solid var(--border);
+  padding:9px 8px;
+  text-align:center;
+  vertical-align:middle;
+  font-size:13px;
+}
+
+.table-wrapper th{
+  color:#1b5e20;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+.table-wrapper td.description-cell{
+  text-align:right;
+  min-width:220px;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+.badge-buy{
+  background:#ffebee;
+  color:#c62828;
+}
+
+.badge-sell{
+  background:#e8f5e9;
+  color:#2e7d32;
+}
+
+.badge-debt{
+  background:#fff3e0;
+  color:#ef6c00;
+}
+
+.badge-credit{
+  background:#e3f2fd;
+  color:#1565c0;
+}
+
+.amount-positive{
+  color:var(--success);
+  font-weight:bold;
+}
+
+.amount-negative{
+  color:var(--danger);
+  font-weight:bold;
+}
+
+.actions-cell{
+  white-space:nowrap;
+  min-width:180px;
+}
+
+.row-btn{
+  border:none;
+  border-radius:8px;
+  padding:7px 10px;
+  font-family:inherit;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:2px;
+}
+
+.row-btn-pdf{
+  background:var(--danger);
+  color:#fff;
+}
+
+.row-btn-due{
+  background:var(--primary);
+  color:#fff;
+}
+
+.empty-state{
+  text-align:center;
+  padding:30px 10px;
+  color:var(--muted);
+  font-weight:bold;
 }
 
 .btn-call-container{
-padding:20px;
+  padding:0 0 10px;
 }
 
 .btn-call{
-background:#2e7d32;
-color:white;
-border:none;
-padding:15px;
-border-radius:12px;
-width:100%;
-font-size:1rem;
-font-weight:bold;
-cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-gap:8px;
+  background:var(--success);
+  color:white;
+  border:none;
+  padding:15px;
+  border-radius:12px;
+  width:100%;
+  font-size:1rem;
+  font-weight:bold;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
 }
 
+.btn-call:disabled{
+  background:#9e9e9e;
+  cursor:not-allowed;
+}
+
+@media (max-width: 900px){
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 600px){
+  .container{
+    padding:12px;
+  }
+
+  .ledger-header{
+    padding:14px 12px 16px;
+  }
+
+  .back-link{
+    position:static;
+    display:inline-block;
+    margin-bottom:10px;
+  }
+
+  #customerNameDisplay{
+    font-size:1.15rem;
+  }
+
+  .card,
+  .table-card{
+    border-radius:14px;
+    padding:14px;
+  }
+
+  .bank-list{
+    grid-template-columns:1fr;
+  }
+}
 </style>
 </head>
 
 <body>
 
 <div class="ledger-header">
-
-<a href="customers.html" class="back-link">
-بازگشت
-</a>
-
-<h2 id="customerNameDisplay">
-بارگذاری...
-</h2>
-
-<small id="customerPhoneDisplay"></small>
-
+  <a href="customers.html" class="back-link">بازگشت</a>
+  <h2 id="customerNameDisplay">بارگذاری...</h2>
+  <small id="customerPhoneDisplay"></small>
 </div>
-
 
 <main class="container">
 
-<section class="card" style="padding:10px;">
+  <section class="card">
+    <h3 class="section-title">حساب‌های بانکی متصل</h3>
+    <div id="bankAccountsContainer" class="bank-list"></div>
+  </section>
 
-<div class="ledger-label-row">
+  <section class="card">
+    <div class="summary-grid">
+      <div class="summary-box">
+        <div class="title">مجموع خرید</div>
+        <div id="totalBuyBox" class="value text-red">۰</div>
+      </div>
 
-<span style="width:80px">
-تاریخ
-</span>
+      <div class="summary-box">
+        <div class="title">مجموع فروش</div>
+        <div id="totalSellBox" class="value text-green">۰</div>
+      </div>
 
-<span style="width:70px;text-align:center">
-نوع
-</span>
+      <div class="summary-box">
+        <div class="title">بالانس مشتری</div>
+        <div id="customerBalanceBox" class="value text-muted">۰</div>
+        <span id="customerBalanceStatus" class="balance-status text-muted"></span>
+      </div>
+    </div>
+  </section>
 
-<span style="width:120px;text-align:center">
-مبلغ معامله
-</span>
+  <section class="table-card">
+    <div class="table-header">
+      <h3 class="table-title"> لیست معاملات این مشتری</h3>
+      <div id="transactionsCountLabel" class="table-meta">تعداد معاملات: ۰</div>
+    </div>
 
-<span style="width:120px;text-align:center">
-پرداخت / دریافت
-</span>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>ردیف</th>
+            <th>تاریخ</th>
+            <th>ساعت</th>
+            <th>نوع</th>
+            <th>دسته</th>
+            <th>نوع پسته</th>
+            <th>وزن</th>
+            <th>فی</th>
+            <th>مبلغ معامله</th>
+            <th>مبلغ پرداختی/دریافتی</th>
+            <th>مانده</th>
+            <th>جزئیات</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody id="ledgerTableBody">
+          <tr>
+            <td colspan="13" class="empty-state">در حال بارگذاری اطلاعات...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-<span style="width:120px;text-align:left">
-مانده
-</span>
-
-</div>
-
-
-<div id="ledgerList">
-
-<!-- ردیف های تراکنش توسط ledger.js ساخته می شوند -->
-
-</div>
-
-</section>
-
-
-<div class="btn-call-container">
-
-<button id="callBtn" class="btn-call">
-📞 تماس با مشتری
-</button>
-
-</div>
+  <div class="btn-call-container">
+    <button id="callBtn" class="btn-call">
+      📞 تماس با مشتری
+    </button>
+  </div>
 
 </main>
 
-
 <script src="db.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="transaction-pdf.js"></script>
+
+<script>
+function toPersianDigits(value){
+  return String(value ?? "").replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+}
+
+function toEnglishDigits(str){
+  return String(str ?? "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+}
+
+function formatNumber(num){
+  const n = Number(num || 0);
+  return toPersianDigits(n.toLocaleString("en-US"));
+}
+
+function formatSignedNumber(num){
+  const n = Number(num || 0);
+  if (n > 0) return "+" + formatNumber(n);
+  if (n < 0) return "-" + formatNumber(Math.abs(n));
+  return formatNumber(0);
+}
+
+function getQueryParam(name){
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+function escapeJsString(value){
+  return String(value ?? "")
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "\\r");
+}
+
+function formatDateOnly(dateString){
+  if (!dateString) return "-";
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return dateString;
+  
+  try {
+    const jdf = new Intl.DateTimeFormat("fa-IR-u-nu-latn", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+    const formatted = jdf.format(d);
+    return toPersianDigits(formatted);
+  } catch (e) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return toPersianDigits(`${y}/${m}/${day}`);
+  }
+}
+
+function formatTimeOnly(dateString){
+  if (!dateString) return "-";
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return "-";
+  
+  try {
+    const jdf = new Intl.DateTimeFormat("fa-IR-u-nu-latn", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+    return toPersianDigits(jdf.format(d));
+  } catch (e) {
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    return toPersianDigits(`${hh}:${mm}`);
+  }
+}
+
+
+function getTypeBadge(type){
+  switch(type){
+    case "buy":
+      return '<span class="badge badge-buy">خرید</span>';
+    case "sell":
+      return '<span class="badge badge-sell">فروش</span>';
+    case "debt":
+      return '<span class="badge badge-debt">بدهی / پرداخت</span>';
+    case "credit":
+      return '<span class="badge badge-credit">طلب / دریافت</span>';
+    default:
+      return '<span class="badge">' + (type || "-") + '</span>';
+  }
+}
+
+function calculateTransactionBalanceEffect(t){
+  const amount = Number(t.amount || 0);
+  const cash = getTransactionCashValue(t);
+
+  if (t.type === "buy") return +(amount - cash);
+  if (t.type === "sell") return -(amount - cash);
+  if (t.type === "debt") return -cash;
+  if (t.type === "credit") return +cash;
+
+  return 0;
+}
+
+function getTransactionCashValue(t){
+  if (t.type === "buy" || t.type === "sell"){
+    return Number(t.paidAmount || 0);
+  }
+  if (t.type === "debt" || t.type === "credit"){
+    const paidAmount = Math.abs(Number(t.paidAmount) || 0);
+    const amount = Math.abs(Number(t.amount) || 0);
+    return paidAmount || amount;
+  }
+  return 0;
+}
+
+function sortTransactionsByDate(items){
+  return [...items].sort((a, b) => {
+    const da = new Date(a.createdAt || 0).getTime();
+    const db = new Date(b.createdAt || 0).getTime();
+    return db - da;
+  });
+}
+function buildDetails(item) {
+  const details = [];
+
+  if (item.bagCount) {
+    details.push(`عدل: ${formatNumber(item.bagCount)}`);
+  }
+
+  if (item.ounce) {
+    details.push(`اونس: ${formatNumber(item.ounce)}`);
+  }
+
+  if (item.dahanbast) {
+    details.push(`دهن‌بست: ${formatNumber(item.dahanbast)}٪`);
+  }
+
+  if (item.gram) {
+    details.push(`گرم: ${formatNumber(item.gram)}`);
+  }
+
+  // اطلاعات حساب ذخیره‌شده همراه تراکنش
+  const settlement = item.settlementAccount;
+
+  if (settlement && settlement.ownerName) {
+    details.push(`صاحب حساب: ${settlement.ownerName}`);
+  }
+
+  if (settlement && settlement.bankName) {
+    details.push(` ${settlement.bankName}`);
+  }
+
+  if (item.dueDate) {
+    details.push(`سررسید: ${item.dueDate}`);
+  }
+
+  if (item.description) {
+    details.push(`شرح: ${item.description}`);
+  }
+
+  const checks = Array.isArray(item.checks) ? item.checks : [];
+
+  const validChecks = checks.filter(check => {
+    const amt = Number(String(check.amount || "").replace(/,/g, ""));
+    return amt > 0;
+  });
+
+  if (validChecks.length > 0) {
+    const totalChecksAmount = validChecks.reduce((sum, check) => {
+      const amt = Number(String(check.amount || "").replace(/,/g, ""));
+      return sum + amt;
+    }, 0);
+
+    details.push(
+      `چک: ${formatNumber(validChecks.length)} فقره، جمع ${formatNumber(totalChecksAmount)}`
+    );
+  }
+
+  return details.length ? details.join(" | ") : "-";
+}
+
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-date/dist/persian-date.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker/dist/js/persian-datepicker.js"></script>
 <script src="ledger.js"></script>
+
+<!-- فیلد مخفی برای باز شدن تقویم سررسید در کاردکس -->
+<input type="text" id="ledgerDueDateInput" readonly 
+       style="position:absolute; opacity:0; pointer-events:none; width:1px; height:1px; top:0; left:0;" />
+<script>
+let currentTransactionIdForDueDate = null;
+let ledgerDueDatePickerInstance = null;
+
+async function openDueDateEditor(transactionId){
+  try {
+    currentTransactionIdForDueDate = String(transactionId);
+
+    // فقط همان تراکنش را از DB بخوان
+    const trx = await getTransactionById(transactionId);
+
+    // اگر dueDate قبلاً وجود داشته باشد، داخل input و picker نمایش داده می‌شود
+    const currentDueDate = trx?.dueDate || "";
+    const $input = $("#ledgerDueDateInput");
+
+    // مقدار قبلی را در input بگذار
+    $input.val(currentDueDate);
+
+    // اگر datepicker آماده است، تاریخ قبلی را داخل خودش هم ست کن
+    if (ledgerDueDatePickerInstance && currentDueDate) {
+      try {
+        ledgerDueDatePickerInstance.setDate(currentDueDate);
+      } catch (e) {
+        // اگر setDate با فرمت رشته‌ای مشکل داشت، همان val کافی است
+      }
+    }
+
+    // باز کردن انتخابگر تاریخ
+    if (ledgerDueDatePickerInstance && typeof ledgerDueDatePickerInstance.show === "function") {
+      ledgerDueDatePickerInstance.show();
+    } else {
+      $input.focus();
+    }
+
+  } catch (error) {
+    console.error("خطا در باز کردن تقویم سررسید:", error);
+    alert("خطا در باز کردن تقویم سررسید");
+  }
+}
+
+
+async function updateDueDateForTransaction(transactionId, newDate){
+  try {
+    await updateTransaction(transactionId, {
+      dueDate: newDate
+    });
+
+    await initLedgerPage();
+
+  } catch (error) {
+    console.error("خطا در بروزرسانی سررسید:", error);
+    alert("متأسفانه خطایی در ثبت سررسید رخ داد.");
+  }
+}
+
+$(document).ready(function () {
+  const $input = $("#ledgerDueDateInput");
+
+  if (typeof $.fn.pDatepicker === "function") {
+    $input.pDatepicker({
+      format: "YYYY/MM/DD",
+      autoClose: true,
+      initialValue: false,
+      calendar: {
+        persian: {
+          locale: "fa"
+        }
+      },
+      onSelect: function () {
+        const selectedDate = $input.val();
+
+        if (currentTransactionIdForDueDate && selectedDate) {
+          updateDueDateForTransaction(currentTransactionIdForDueDate, selectedDate);
+        }
+
+        currentTransactionIdForDueDate = null;
+      }
+    });
+
+    ledgerDueDatePickerInstance = $input.data("pDatepicker");
+  }
+});
+</script>
+
 
 </body>
 </html>

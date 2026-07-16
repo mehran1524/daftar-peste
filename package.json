@@ -1,0 +1,24 @@
+{
+  "name": "daftar-peste",
+  "version": "1.0.0",
+  "description": "",
+  "main": "accounts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehran1524/daftar-peste.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mehran1524/daftar-peste/issues"
+  },
+  "homepage": "https://github.com/mehran1524/daftar-peste#readme",
+  "devDependencies": {
+    "terser": "^5.49.0"
+  }
+}

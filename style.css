@@ -198,3 +198,39 @@ input:focus { border-color: var(--primary-color); outline: none; }
   font-weight: bold;
   cursor: pointer;
 }
+/* ظرف نگهدارنده مبالغ در ستون چپ تراکنش */
+.item-amount-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 120px;
+}
+
+/* استایل عمومی مبلغ */
+.item-amount {
+  font-weight: bold;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+/* مبلغ کل معامله (خرید/فروش) - مشکی */
+.item-amount.main-amount {
+  color: #111;
+}
+
+/* مبالغ نقدی (پرداختی/دریافتی یا مستقل) */
+.item-amount.sub-amount {
+  font-size: 0.92rem;
+}
+
+/* رنگ قرمز برای مبالغ منفی (خرید نقدی / پرداخت بدهی مستقل) */
+.item-amount.sub-amount.negative {
+  color: var(--danger-color) !important;
+}
+
+/* رنگ سبز برای مبالغ مثبت (فروش نقدی / دریافت طلب مستقل) */
+.item-amount.sub-amount.positive {
+  color: var(--success-color) !important;
+}
+
