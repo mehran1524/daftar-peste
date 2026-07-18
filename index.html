@@ -458,14 +458,42 @@ body{
         <div id="licenseFormBox">
             <div class="license-form-group">
                 <label for="licensePhone">شماره موبایل</label>
-                <input type="text" id="licensePhone" placeholder="مثلاً 09123456789" inputmode="numeric" />
+                <input
+    type="text"
+    id="licensePhone"
+    placeholder="مثلاً 09123456789"
+    inputmode="numeric"
+    maxlength="11"
+    required
+/>
+
             </div>
 
             <div class="license-form-group">
                 <label for="licenseCode">کد فعال‌سازی</label>
                 <input type="text" id="licenseCode" placeholder="کد دریافتی را وارد کنید" />
             </div>
+            <div style="margin:10px 0 14px 0; font-size:0.85rem; color:#555; line-height:1.9; text-align:center;">
+        برای فعال‌سازی لایسنس لطفا در روبیکا یا واتس‌اپ پیام بدهید.
+    </div>
 
+    <button
+        id="rubikaSupportBtn"
+        type="button"
+        class="license-btn license-btn-secondary"
+        style="margin-bottom:10px;"
+    >
+        پیام در روبیکا
+    </button>
+
+    <button
+        id="whatsappSupportBtn"
+        type="button"
+        class="license-btn license-btn-secondary"
+        style="margin-bottom:10px; background:#25d366;"
+    >
+        پیام در واتس‌اپ
+    </button>
             <button id="activateLicenseBtn" type="button" class="license-btn license-btn-primary" style="margin-bottom:10px;">
                 ثبت و فعال‌سازی
             </button>
