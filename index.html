@@ -444,59 +444,79 @@ body{
         <h2 class="license-title">دفتر حساب پسته</h2>
         <p class="license-subtitle">ورود به برنامه با نسخه آزمایشی یا فعال‌سازی لایسنس</p>
 
-        <p id="licenseIntroText">
-            برای استفاده از برنامه، نسخه آزمایشی را شروع کنید یا لایسنس خود را فعال نمایید. این دسترسی فقط برای همین دستگاه ثبت می‌شود.
-        </p>
-
         <div id="licenseMessage"></div>
 
+        <!-- صفحه اول: نسخه آزمایشی -->
         <div id="licenseStartBox">
-            <button id="startTrialBtn" type="button" class="license-btn license-btn-primary">شروع نسخه آزمایشی</button>
-            <button id="showLicenseFormBtn" type="button" class="license-btn license-btn-secondary">فعال‌سازی لایسنس</button>
-        </div>
-
-        <div id="licenseFormBox">
             <div class="license-form-group">
                 <label for="licensePhone">شماره موبایل</label>
                 <input
-    type="text"
-    id="licensePhone"
-    placeholder="مثلاً 09123456789"
-    inputmode="numeric"
-    maxlength="11"
-    required
-/>
-
+                    type="text"
+                    id="licensePhone"
+                    placeholder="مثلاً 09123456789"
+                    inputmode="numeric"
+                    maxlength="11"
+                    required
+                />
             </div>
 
+            <!-- پیام مخصوص صفحه اول -->
+            <div style="margin:10px 0 14px 0; font-size:0.85rem; color:#555; line-height:1.9; text-align:center;">
+                لطفا برای دریافت لایسنس در صفحه فعال‌سازی روی دکمه‌های پیام در روبیکا یا واتس‌اپ کلیک کنید.
+            </div>
+
+            <button id="startTrialBtn" type="button" class="license-btn license-btn-primary">
+                شروع نسخه آزمایشی
+            </button>
+
+            <button id="showLicenseFormBtn" type="button" class="license-btn license-btn-secondary">
+                فعال‌سازی لایسنس
+            </button>
+        </div>
+
+        <!-- صفحه دوم: فعال‌سازی لایسنس -->
+        <div id="licenseFormBox">
             <div class="license-form-group">
                 <label for="licenseCode">کد فعال‌سازی</label>
-                <input type="text" id="licenseCode" placeholder="کد دریافتی را وارد کنید" />
+                <input
+                    type="text"
+                    id="licenseCode"
+                    placeholder="کد دریافتی را وارد کنید"
+                />
             </div>
+
+            <!-- پیام مخصوص صفحه فعال‌سازی -->
             <div style="margin:10px 0 14px 0; font-size:0.85rem; color:#555; line-height:1.9; text-align:center;">
-        برای فعال‌سازی لایسنس لطفا در روبیکا یا واتس‌اپ پیام بدهید.
-    </div>
+                لطفا برای دریافت لایسنس روی دکمه پیام در روبیکا یا واتس‌اپ کلیک کنید.
+            </div>
 
-    <button
-        id="rubikaSupportBtn"
-        type="button"
-        class="license-btn license-btn-secondary"
-        style="margin-bottom:10px;"
-    >
-        پیام در روبیکا
-    </button>
+            <button
+                id="rubikaSupportBtn"
+                type="button"
+                class="license-btn license-btn-secondary"
+                style="margin-bottom:10px;"
+            >
+                پیام در روبیکا
+            </button>
 
-    <button
-        id="whatsappSupportBtn"
-        type="button"
-        class="license-btn license-btn-secondary"
-        style="margin-bottom:10px; background:#25d366;"
-    >
-        پیام در واتس‌اپ
-    </button>
-            <button id="activateLicenseBtn" type="button" class="license-btn license-btn-primary" style="margin-bottom:10px;">
+            <button
+                id="whatsappSupportBtn"
+                type="button"
+                class="license-btn license-btn-secondary"
+                style="margin-bottom:10px; background:#25d366;"
+            >
+                پیام در واتس‌اپ
+            </button>
+
+            <button
+                id="activateLicenseBtn"
+                type="button"
+                class="license-btn license-btn-primary"
+                style="margin-bottom:10px;"
+            >
                 ثبت و فعال‌سازی
             </button>
+
             <button id="backToTrialOptionsBtn" type="button" class="license-btn license-btn-muted">
                 بازگشت
             </button>
