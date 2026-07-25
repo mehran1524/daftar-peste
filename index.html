@@ -475,15 +475,30 @@ body{
         </div>
 
         <!-- صفحه دوم: فعال‌سازی لایسنس -->
-        <div id="licenseFormBox">
-            <div class="license-form-group">
-                <label for="licenseCode">کد فعال‌سازی</label>
-                <input
-                    type="text"
-                    id="licenseCode"
-                    placeholder="کد دریافتی را وارد کنید"
-                />
-            </div>
+       <!-- صفحه دوم: فعال‌سازی لایسنس -->
+<div id="licenseFormBox">
+
+    <div id="manualAppKeyContainer" style="display:none;">
+        <div class="license-form-group">
+            <label for="manualAppKey">کلید برنامه (App Key)</label>
+            <input
+                type="text"
+                id="manualAppKey"
+                placeholder="App Key را وارد کنید"
+                dir="ltr"
+            />
+        </div>
+    </div>
+
+    <div class="license-form-group">
+        <label for="licenseCode">کد فعال‌سازی</label>
+        <input
+            type="text"
+            id="licenseCode"
+            placeholder="کد دریافتی را وارد کنید"
+        />
+    </div>
+
 
             <!-- پیام مخصوص صفحه فعال‌سازی -->
             <div style="margin:10px 0 14px 0; font-size:0.85rem; color:#555; line-height:1.9; text-align:center;">
