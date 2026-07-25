@@ -537,7 +537,7 @@ async function getNearestDueTransaction(customerId) {
 
   const dueTransactions = transactions.filter(t => {
     if (!t.dueDate) return false;
-    return (Number(t.amount || 0) - Number(t.paidAmount || 0)) > 0;
+    return (Number(t.amount || 0) - Number(t.paidAmount || 0)) !== 0;
   });
 
   if (!dueTransactions.length) return null;
