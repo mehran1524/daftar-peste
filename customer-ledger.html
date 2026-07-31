@@ -589,10 +589,13 @@ function getTypeBadge(type){
       return '<span class="badge badge-debt">بدهی / پرداخت</span>';
     case "credit":
       return '<span class="badge badge-credit">طلب / دریافت</span>';
+    case "consignment": // اضافه شد برای پشتیبانی از تراکنش امانی
+      return '<span class="badge" style="background:#e0e0e0; color:#444;">امانی</span>';
     default:
       return '<span class="badge">' + (type || "-") + '</span>';
   }
 }
+
 
 function calculateTransactionBalanceEffect(t){
   const amount = Number(t.amount || 0);
@@ -602,6 +605,7 @@ function calculateTransactionBalanceEffect(t){
   if (t.type === "sell") return -(amount - cash);
   if (t.type === "debt") return -cash;
   if (t.type === "credit") return +cash;
+  if (t.type === "consignment") return 0; // تراکنش امانی روی مانده حساب تاثیری ندارد
 
   return 0;
 }
