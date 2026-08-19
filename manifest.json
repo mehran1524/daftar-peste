@@ -1,24 +1,27 @@
 {
+  "id": "/",
   "name": "دفتر حساب پسته",
   "short_name": "دفتر پسته",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#f4f6f8",
   "theme_color": "#2e7d32",
   "description": "اپ حسابداری محلی برای خرید و فروش پسته",
+  "lang": "fa-IR",
+  "dir": "rtl",
   "icons": [
     {
-      "src": "./icons/iconapp192.png",
+      "src": "/icons/iconapp192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "./icons/iconapp512.png",
+      "src": "/icons/iconapp512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     }
   ]
 }

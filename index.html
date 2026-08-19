@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>دفتر حساب پسته</title>
 <meta name="theme-color" content="#2e7d32" />
-<link rel="manifest" href="manifest.json" />
+<link rel="manifest" href="/manifest.json" />
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker/dist/css/persian-datepicker.css">
 
@@ -46,7 +46,6 @@ body{
     font-family:inherit;
     font-weight:bold;
 }
-
 
 .license-card{
     width:100%;
@@ -424,16 +423,34 @@ body{
     justify-content:flex-start;
 }
 
-#bagCountGroup{ order:1; }
-#ounceGroup{ order:2; }
-#dahanbastGroup{ order:3; }
-#gramGroup{ order:4; }
-#finalPriceGroup{ order:5; }
+/* ترتیب‌بندی پیش‌فرض برای حالت عادی */
+#ounceGroup { order: 1; }
+#dahanbastGroup { order: 2; }
+#finalPriceGroup { order: 3; }
+#gramGroup { order: 4; }
+#nokhodooGroup { order: 5; }
 
-.dahanbast-layout #finalPriceGroup{ order:2; }
-.dahanbast-layout #gramGroup{ order:1; }
-.dahanbast-layout #bagCountGroup{ order:3; }
-.dahanbast-layout #ounceGroup{ order:4; }
+/* تنظیمات جدید برای چیدمان درخواستی مهران */
+.dahanbast-layout #gramGroup { 
+    display: block !important; 
+    order: 1 !important; 
+}
+
+.dahanbast-layout #finalPriceGroup { 
+    display: block !important; 
+    order: 2 !important; 
+}
+
+.dahanbast-layout #ounceGroup { 
+    order: 3 !important; 
+    flex: 1 1 100% !important; /* اونس به تنهایی در ردیف بعد قرار می‌گیرد */
+}
+
+.dahanbast-layout #dahanbastGroup,
+.dahanbast-layout #nokhodooGroup { 
+    display: none !important; 
+}
+
 </style>
 </head>
 
@@ -446,9 +463,20 @@ body{
 
         <div id="licenseMessage"></div>
 
-        <!-- صفحه اول: نسخه آزمایشی -->
         <div id="licenseStartBox">
-            <div class="license-form-group">
+            <!-- اینپوت ورود دستی اپ‌کی (برای دستگاه‌هایی که لینک رو نمی‌خونن مثل آیفون) -->
+            <div id="trialAppKeyContainer" class="license-form-group" style="display:none; margin-bottom:0;">
+                <label for="trialAppKey">کلید برنامه (App Key)</label>
+                <input
+                    type="text"
+                    id="trialAppKey"
+                    placeholder="App Key را وارد کنید"
+                    dir="ltr"
+                    autocomplete="off"
+                />
+            </div>
+
+            <div class="license-form-group" style="margin-bottom:0;">
                 <label for="licensePhone">شماره موبایل</label>
                 <input
                     type="text"
@@ -460,10 +488,19 @@ body{
                 />
             </div>
 
-            <!-- پیام مخصوص صفحه اول -->
             <div style="margin:10px 0 14px 0; font-size:0.85rem; color:#555; line-height:1.9; text-align:center;">
                 لطفا برای دریافت لایسنس در صفحه فعال‌سازی روی دکمه‌های پیام در روبیکا یا واتس‌اپ کلیک کنید.
             </div>
+
+            <!-- دکمه واتس‌اپ برای دریافت اپ‌کی نسخه آزمایشی -->
+            <button
+                id="trialWhatsappSupportBtn"
+                type="button"
+                class="license-btn license-btn-secondary"
+                style="background:#25d366;"
+            >
+                پیام در واتس‌اپ برای فعال‌سازی نسخه آزمایشی
+            </button>
 
             <button id="startTrialBtn" type="button" class="license-btn license-btn-primary">
                 شروع نسخه آزمایشی
@@ -474,8 +511,6 @@ body{
             </button>
         </div>
 
-        <!-- صفحه دوم: فعال‌سازی لایسنس -->
-       <!-- صفحه دوم: فعال‌سازی لایسنس -->
 <div id="licenseFormBox">
 
     <div id="manualAppKeyContainer" style="display:none;">
@@ -635,9 +670,21 @@ body{
                 </div>
 
                 <div class="form-row">
+                    <div class="form-group" id="bagCountGroup">
+                        <label>تعداد (عدل)</label>
+                       <input type="text" id="bagCount" inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="گونی" />
+
+                    </div>
+                    <div class="form-group" id="grossWeightGroup">
+                        <label>وزن ناخالص (کیلو)</label>
+                        <input type="text" id="grossWeight" inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="مثلاً ۱۵۵.۲" />
+                    </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group" id="weightGroup">
                         <label>وزن خالص (کیلو)</label>
-                        <input type="text" id="weight" inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="مثلاً ۱۵۰.۵" />
+                        <input type="text" id="weight" class="readonly-input" readonly  inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="مثلاً ۱۵۰.۵" />
                         <input type="text" id="weightWords" readonly placeholder="وزن به حروف" class="readonly-input" style="font-size:0.7rem; margin-top:5px;" />
                     </div>
                     <div class="form-group" id="priceGroup">
@@ -647,12 +694,8 @@ body{
                     </div>
                 </div>
 
+                <!-- تمامی فیلدهای متغیر محاسباتی درون کانتینر با Display Flex قرار گرفتند تا ترتیب‌بندی درستی داشته باشند -->
                 <div class="dynamic-flex-rows" id="dynamicRowsContainer">
-                    <div class="form-group" id="bagCountGroup">
-                        <label>تعداد (عدل)</label>
-                        <input type="text" id="bagCount" inputmode="numeric" pattern="[0-9۰-۹٠-٩]*" placeholder="گونی" />
-                    </div>
-
                     <div class="form-group" id="ounceGroup">
                         <label>اونس</label>
                         <input type="text" id="ounce" inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="مثلاً ۲۶" />
@@ -671,6 +714,11 @@ body{
                     <div class="form-group" id="gramGroup">
                         <label>گرم مغز</label>
                         <input type="text" id="gram" inputmode="decimal" pattern="[0-9۰-۹٠-٩.]*" placeholder="مثلاً ۱.۵" />
+                    </div>
+
+                    <div class="form-group" id="nokhodooGroup">
+                        <label>درصد نخودو</label>
+                        <input type="text" id="nokhodoo" inputmode="numeric" pattern="[0-9۰-۹٠-٩]*" placeholder="مثلاً ۳" />
                     </div>
                 </div>
             </div>
@@ -788,20 +836,15 @@ body{
 <div id="backupModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" id="closeBackupBtn">&times;</span>
-
         <h2 style="color:#8e44ad; margin-bottom: 15px;">پشتیبان‌گیری از داده‌ها</h2>
-
         <p style="font-size: 0.8rem; line-height: 1.6; color: #666;">
             با دانلود بکاپ، یک فایل JSON در گوشی شما ذخیره می‌شود. برای بازیابی، همان فایل را انتخاب کنید.
         </p>
-
         <div class="backup-actions">
-    <button type="button" class="btn-download" onclick="downloadBackup()">دانلود اطلاعات</button>
-    <button type="button" class="btn-share" onclick="shareBackup()">اشتراک‌گذاری در فضای ابری</button>
-    <button type="button" class="btn-restore" onclick="triggerFileSelect()">بازیابی اطلاعات</button>
-</div>
-
-
+            <button type="button" class="btn-download" onclick="downloadBackup()">دانلود اطلاعات</button>
+            <button type="button" class="btn-share" onclick="shareBackup()">اشتراک‌گذاری در فضای ابری</button>
+            <button type="button" class="btn-restore" onclick="triggerFileSelect()">بازیابی اطلاعات</button>
+        </div>
         <input type="file" id="fileInput" accept=".json" style="display:none;" />
     </div>
 </div>
@@ -820,96 +863,29 @@ body{
                     <option value="">-- انتخاب حساب --</option>
                 </select>
             </div>
-
             <div class="form-group" style="margin-bottom: 12px;">
                 <label style="font-size: 0.85rem; font-weight: bold;">نام صاحب حساب</label>
-                <input
-                    type="text"
-                    id="myAccountOwner"
-                    placeholder="مثلاً مهران محمدی"
-                    style="width: 100%; padding: 10px; border: 1px solid #c8e6c9; border-radius: 8px; box-sizing: border-box; font-family: inherit;"
-                />
+                <input type="text" id="myAccountOwner" placeholder="مثلاً مهران محمدی" style="width: 100%; padding: 10px; border: 1px solid #c8e6c9; border-radius: 8px; box-sizing: border-box; font-family: inherit;" />
             </div>
-
             <div class="form-group" style="margin-bottom: 12px;">
                 <label style="font-size: 0.85rem; font-weight: bold;">بانک</label>
-                <select
-                    id="myAccountBank"
-                    style="width: 100%; padding: 10px; border: 1px solid #c8e6c9; border-radius: 8px; box-sizing: border-box; font-family: inherit; background: white;"
-                >
+                <select id="myAccountBank" style="width: 100%; padding: 10px; border: 1px solid #c8e6c9; border-radius: 8px; box-sizing: border-box; font-family: inherit; background: white;">
                     <option value="">-- انتخاب بانک --</option>
-                    <option value="ملی">ملی</option>
-                    <option value="ملت">ملت</option>
-                    <option value="صادرات">صادرات</option>
-                    <option value="تجارت">تجارت</option>
-                    <option value="سپه">سپه</option>
-                    <option value="کشاورزی">کشاورزی</option>
-                    <option value="مسکن">مسکن</option>
-                    <option value="رفاه">رفاه</option>
-                    <option value="پارسیان">پارسیان</option>
-                    <option value="پاسارگاد">پاسارگاد</option>
-                    <option value="سامان">سامان</option>
-                    <option value="آینده">آینده</option>
-                    <option value="اقتصاد نوین">اقتصاد نوین</option>
-                    <option value="شهر">شهر</option>
-                    <option value="سینا">سینا</option>
-                    <option value="کارآفرین">کارآفرین</option>
-                    <option value="دی">دی</option>
-                    <option value="گردشگری">گردشگری</option>
-                    <option value="رسالت">رسالت</option>
+                    <option value="ملی">ملی</option><option value="ملت">ملت</option><option value="صادرات">صادرات</option><option value="تجارت">تجارت</option><option value="سپه">سپه</option><option value="کشاورزی">کشاورزی</option><option value="مسکن">مسکن</option><option value="رفاه">رفاه</option><option value="پارسیان">پارسیان</option><option value="پاسارگاد">پاسارگاد</option><option value="سامان">سامان</option><option value="آینده">آینده</option><option value="اقتصاد نوین">اقتصاد نوین</option><option value="شهر">شهر</option><option value="سینا">سینا</option><option value="کارآفرین">کارآفرین</option><option value="دی">دی</option><option value="گردشگری">گردشگری</option><option value="رسالت">رسالت</option>
                 </select>
             </div>
-
             <div class="form-group" style="margin-bottom: 15px;">
                 <label style="font-size: 0.85rem; font-weight: bold;">شماره شبا (بدون IR)</label>
-                <input
-                    type="text"
-                    id="myAccountSheba"
-                    inputmode="numeric"
-                    maxlength="29"
-                    autocomplete="off"
-                    placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
-                    dir="ltr"
-                    style="width: 100%; padding: 10px; border: 1px solid #c8e6c9; border-radius: 8px; box-sizing: border-box; text-align: left; font-family: inherit;"
-                />
+                <input type="text" id="myAccountSheba" inputmode="numeric" maxlength="29" autocomplete="off" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" dir="ltr" style="width: 100%; padding: 10px; border: 1px solid #c8e6c9; border-radius: 8px; box-sizing: border-box; text-align: left; font-family: inherit;" />
             </div>
-
             <div class="form-group" style="margin-bottom: 15px;">
                 <label style="font-size: 0.85rem; font-weight: bold;">شماره کارت</label>
-                <input
-                    type="text"
-                    id="myAccountCard"
-                    inputmode="numeric"
-                    maxlength="19"
-                    autocomplete="off"
-                    placeholder="مثلاً 6037-9918-1234-5678"
-                    dir="ltr"
-                    style="width: 100%; padding: 10px; border: 1px solid #c8e6c9; border-radius: 8px; box-sizing: border-box; text-align: left; font-family: inherit;"
-                />
+                <input type="text" id="myAccountCard" inputmode="numeric" maxlength="19" autocomplete="off" placeholder="مثلاً 6037-9918-1234-5678" dir="ltr" style="width: 100%; padding: 10px; border: 1px solid #c8e6c9; border-radius: 8px; box-sizing: border-box; text-align: left; font-family: inherit;" />
             </div>
-
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button
-                    type="button"
-                    onclick="saveMyAccount()"
-                    style="flex: 1; padding: 10px; background: #1565c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;"
-                >
-                    ذخیره حساب
-                </button>
-                <button
-                    type="button"
-                    onclick="applyMyAccount()"
-                    style="flex: 1; padding: 10px; background: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;"
-                >
-                    تأیید و اعمال
-                </button>
-                <button
-                    type="button"
-                    onclick="closeMyAccountsModal()"
-                    style="flex: 1; padding: 10px; background: #888; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;"
-                >
-                    انصراف
-                </button>
+                <button type="button" onclick="saveMyAccount()" style="flex: 1; padding: 10px; background: #1565c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;">ذخیره حساب</button>
+                <button type="button" onclick="applyMyAccount()" style="flex: 1; padding: 10px; background: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;">تأیید و اعمال</button>
+                <button type="button" onclick="closeMyAccountsModal()" style="flex: 1; padding: 10px; background: #888; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;">انصراف</button>
             </div>
         </div>
     </div>
@@ -918,10 +894,7 @@ body{
 <div id="settlementModal" class="modal">
     <div class="modal-content" style="max-width: 400px; padding: 20px;">
         <span class="close-modal" onclick="closeSettlementModal()">&times;</span>
-        <h3 style="color:#2e7d32; margin-bottom: 15px; border-bottom: 2px solid #2e7d32; padding-bottom: 8px;">
-            مشخصات حساب تراکنش
-        </h3>
-
+        <h3 style="color:#2e7d32; margin-bottom: 15px; border-bottom: 2px solid #2e7d32; padding-bottom: 8px;">مشخصات حساب تراکنش</h3>
         <form id="settlementAccountForm" onsubmit="event.preventDefault();">
             <div class="form-group" style="margin-bottom: 12px;">
                 <label style="font-size: 0.85rem; font-weight: bold;">انتخاب از حساب‌های ذخیره شده</label>
@@ -929,103 +902,27 @@ body{
                     <option value="">-- انتخاب حساب --</option>
                 </select>
             </div>
-
             <div class="form-group" style="margin-bottom: 12px;">
                 <label style="font-size: 0.85rem; font-weight: bold;">نام صاحب حساب</label>
                 <div id="modalAccountOwnerDisplay" class="settlement-display-box">—</div>
             </div>
-
             <div class="form-group" style="margin-bottom: 12px;">
                 <label style="font-size: 0.85rem; font-weight: bold;">بانک</label>
                 <div id="modalAccountBankDisplay" class="settlement-display-box">—</div>
             </div>
-
             <div class="form-group" style="margin-bottom: 15px;">
                 <label style="font-size: 0.85rem; font-weight: bold;">شماره شبا (بدون IR)</label>
                 <div id="modalAccountShebaDisplay" class="settlement-display-box settlement-display-ltr">—</div>
             </div>
-
-            <button
-                type="button"
-                onclick="goToCustomerAccountForm()"
-                style="width: 100%; margin-bottom: 10px; padding: 10px; background: #1565c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;"
-            >
-                ثبت حساب جدید مشتری+
-            </button>
-
+            <button type="button" onclick="goToCustomerAccountForm()" style="width: 100%; margin-bottom: 10px; padding: 10px; background: #1565c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;">ثبت حساب جدید مشتری+</button>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button
-                    type="button"
-                    onclick="applySettlementAccount()"
-                    style="flex: 1; padding: 10px; background: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;"
-                >
-                    تأیید و اعمال
-                </button>
-                <button
-                    type="button"
-                    onclick="closeSettlementModal()"
-                    style="flex: 1; padding: 10px; background: #888; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;"
-                >
-                    انصراف
-                </button>
+                <button type="button" onclick="applySettlementAccount()" style="flex: 1; padding: 10px; background: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;">تأیید و اعمال</button>
+                <button type="button" onclick="closeSettlementModal()" style="flex: 1; padding: 10px; background: #888; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit;">انصراف</button>
             </div>
         </form>
     </div>
 </div>
 </div>
-
-<script>
-function openCustomersPage(){
-    window.location.href = "customers.html";
-}
-
-const backupModal = document.getElementById("backupModal");
-const openBackupBtn = document.getElementById("openBackupBtn");
-const closeBackupBtn = document.getElementById("closeBackupBtn");
-const fileInput = document.getElementById("fileInput");
-
-openBackupBtn.addEventListener("click", () => {
-    backupModal.style.display = "block";
-});
-
-closeBackupBtn.addEventListener("click", () => {
-    backupModal.style.display = "none";
-});
-
-window.addEventListener("click", (event) => {
-    if (event.target == backupModal) {
-        backupModal.style.display = "none";
-    }
-});
-
-function triggerFileSelect() {
-    const confirmRestore = confirm("توجه: بازیابی اطلاعات باعث جایگزینی داده‌های فعلی با داده‌های فایل بکاپ می‌شود. آیا مطمئن هستید؟");
-
-    if(confirmRestore) {
-        fileInput.click();
-    }
-}
-
-fileInput.addEventListener("change", function(e) {
-    const file = e.target.files[0];
-
-    if (file) {
-        restoreBackupFromFile(file);
-    }
-});
-
-function normalizeNumber(value) {
-    if (!value) return 0;
-
-    return Number(
-        String(value)
-            .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
-            .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
-            .replace(/,/g, "")
-            .trim()
-    ) || 0;
-}
-</script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/persian-date/dist/persian-date.js"></script>
@@ -1039,51 +936,46 @@ function normalizeNumber(value) {
 <script type="module" src="app.js"></script>
 
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(function (registration) {
-        console.log("Service Worker Registered ✅", registration.scope);
-      })
-      .catch(function (error) {
-        console.log("Service Worker Registration Failed ❌", error);
-      });
-  });
-}
-</script>
+function openCustomersPage(){ window.location.href = "customers.html"; }
+const backupModal = document.getElementById("backupModal");
+const openBackupBtn = document.getElementById("openBackupBtn");
+const closeBackupBtn = document.getElementById("closeBackupBtn");
+const fileInput = document.getElementById("fileInput");
 
-<script>
-window.addEventListener("click", (event) => {
-    const sModal = document.getElementById("settlementModal");
-    if (event.target == sModal) {
-        sModal.style.display = "none";
-    }
+openBackupBtn.addEventListener("click", () => { backupModal.style.display = "block"; });
+closeBackupBtn.addEventListener("click", () => { backupModal.style.display = "none"; });
+window.addEventListener("click", (event) => { if (event.target == backupModal) { backupModal.style.display = "none"; } });
+
+function triggerFileSelect() {
+    const confirmRestore = confirm("توجه: بازیابی اطلاعات باعث جایگزینی داده‌های فعلی با داده‌های فایل بکاپ می‌شود. آیا مطمئن هستید؟");
+    if(confirmRestore) { fileInput.click(); }
+}
+
+fileInput.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (file) { restoreBackupFromFile(file); }
 });
 
 $(document).ready(function() {
     if (typeof $.fn.pDatepicker === 'function') {
-        $("#dueDate").pDatepicker({
-            format: 'YYYY/MM/DD',
-            autoClose: true,
-            initialValue: false,
-            calendar: {
-                persian: {
-                    locale: 'fa'
-                }
-            }
-        });
+        $("#dueDate").pDatepicker({ format: 'YYYY/MM/DD', autoClose: true, initialValue: false, calendar: { persian: { locale: 'fa' } } });
     }
 });
-</script>
 
-<script>
-window.addEventListener("click", function(event) {
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(function (registration) { console.log("Service Worker Registered ✅", registration.scope); })
+      .catch(function (error) { console.log("Service Worker Registration Failed ❌", error); });
+  });
+}
+
+window.addEventListener("click", (event) => {
+    const sModal = document.getElementById("settlementModal");
     const myModal = document.getElementById("myAccountsModal");
-    if (event.target === myModal) {
-        myModal.style.display = "none";
-    }
+    if (event.target == sModal) sModal.style.display = "none";
+    if (event.target === myModal) myModal.style.display = "none";
 });
 </script>
-
 </body>
 </html>

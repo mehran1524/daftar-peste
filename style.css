@@ -16,76 +16,95 @@ body {
   direction: rtl;
 }
 
-/* هدر اصلی مهندس مهران */
+/* هدر اصلی */
 .app-header {
   background: var(--primary-color);
   color: white;
-  padding: 20px 0 0 0; 
+  padding: 20px 0 0 0;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  position: relative; /* بسیار مهم برای موقعیت دکمه‌ها */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 140px; 
+  min-height: 140px;
 }
 
-.app-header h1 { margin: 0; font-size: 1.5rem; }
-.app-header p { margin: 5px 0 10px 0; font-size: 0.9rem; opacity: 0.9; }
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.app-header p {
+  margin: 5px 0 10px 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
 
 /* استایل مشترک دکمه‌های گوشه هدر */
-.customer-btn, .report-btn {
-    position: absolute;
-    bottom: 0; 
-    border: none;
-    padding: 6px 12px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    cursor: pointer;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    z-index: 100;
-}
-
-/* دکمه آبی - دقیقاً در گوشه راست و پایین */
-.customer-btn {
-    right: 0;
-    background: #1976d2;
-    color: white;
-    border-radius: 8px 0 0 0;
-}
-
-/* دکمه نارنجی - چسبیده به سمت چپِ دکمه آبی */
+.customer-btn,
 .report-btn {
-    right: 90px; /* با توجه به عرض دکمه آبی تنظیم شده */
-    background-color: var(--orange-report);
-    color: white;
-    border-radius: 8px 0 0 0;
+  position: absolute;
+  bottom: 0;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  z-index: 100;
 }
 
-.customer-btn:active { background: #1565c0; }
-.report-btn:active { background-color: #d35400; }
+/* دکمه آبی مشتریان */
+.customer-btn {
+  right: 0;
+  background: #1976d2;
+  color: white;
+  border-radius: 8px 0 0 0;
+}
+
+/* دکمه نارنجی گزارش */
+.report-btn {
+  right: 90px;
+  background-color: var(--orange-report);
+  color: white;
+  border-radius: 8px 0 0 0;
+}
+
+.customer-btn:active {
+  background: #1565c0;
+}
+
+.report-btn:active {
+  background-color: #d35400;
+}
 
 /* استایل باکس ساعت و تاریخ */
 .date-container {
-    background: rgba(0,0,0,0.2);
-    padding: 5px 15px;
-    border-radius: 20px;
-    margin-bottom: 45px; 
-    direction: ltr;
-    font-size: 0.85rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px 15px;
+  border-radius: 20px;
+  margin-bottom: 45px;
+  direction: ltr;
+  font-size: 0.85rem;
 }
 
-/* سایر استایل‌های بدنه */
-.container { padding: 15px; max-width: 600px; margin: 0 auto; }
+/* ظرف اصلی برنامه */
+.container {
+  padding: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+}
 
+/* کارت‌ها */
 .card {
   background: white;
   border-radius: 12px;
   padding: 15px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .card h2 {
@@ -96,11 +115,11 @@ body {
   color: var(--primary-color);
 }
 
+/* آمار حساب */
 .stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  
 }
 
 .stat-box {
@@ -110,20 +129,44 @@ body {
   text-align: center;
 }
 
-.stat-box:last-child { grid-column: span 2; background: #fff9c4; }
-.stat-box span { display: block; font-size: 0.8rem; color: #666; }
-.stat-box strong { font-size: 1.1rem; display: block; margin-top: 5px; }
+.stat-box:last-child {
+  grid-column: span 2;
+  background: #fff9c4;
+}
 
+.stat-box span {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.stat-box strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 1.1rem;
+}
+
+/* ردیف‌های فرم */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-.form-group { margin-bottom: 15px; }
-label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+.form-group {
+  margin-bottom: 15px;
+}
 
-input, select {
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* ورودی‌ها */
+input,
+select {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -133,8 +176,13 @@ input, select {
   font-family: inherit;
 }
 
-input:focus { border-color: var(--primary-color); outline: none; }
+input:focus,
+select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
 
+/* ورودی فقط‌خواندنی */
 .readonly-input {
   background-color: #f1f8e9;
   border: 1px dashed var(--primary-color);
@@ -142,6 +190,7 @@ input:focus { border-color: var(--primary-color); outline: none; }
   color: var(--primary-color);
 }
 
+/* دکمه ثبت */
 .btn-submit {
   width: 100%;
   padding: 15px;
@@ -154,7 +203,12 @@ input:focus { border-color: var(--primary-color); outline: none; }
   cursor: pointer;
 }
 
-.transaction-list { list-style: none; padding: 0; }
+/* فهرست تراکنش‌ها */
+.transaction-list {
+  list-style: none;
+  padding: 0;
+}
+
 .transaction-item {
   display: flex;
   justify-content: space-between;
@@ -163,21 +217,34 @@ input:focus { border-color: var(--primary-color); outline: none; }
   border-bottom: 1px solid #eee;
 }
 
-.item-info { display: flex; flex-direction: column; }
-.item-desc { font-size: 0.85rem; color: #777; }
-.item-amount { font-weight: bold; font-size: 1rem; }
+.item-info {
+  display: flex;
+  flex-direction: column;
+}
 
-.text-red { color: var(--danger-color); }
-.text-green { color: var(--success-color); }
+.item-desc {
+  font-size: 0.85rem;
+  color: #777;
+}
 
-/* Modal برای گزارش‌گیری */
+.text-red {
+  color: var(--danger-color);
+}
+
+.text-green {
+  color: var(--success-color);
+}
+
+/* پنجره گزارش‌گیری */
 .modal {
   display: none;
   position: fixed;
   z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.7);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(5px);
 }
 
@@ -198,6 +265,7 @@ input:focus { border-color: var(--primary-color); outline: none; }
   font-weight: bold;
   cursor: pointer;
 }
+
 /* ظرف نگهدارنده مبالغ در ستون چپ تراکنش */
 .item-amount-group {
   display: flex;
@@ -214,23 +282,85 @@ input:focus { border-color: var(--primary-color); outline: none; }
   white-space: nowrap;
 }
 
-/* مبلغ کل معامله (خرید/فروش) - مشکی */
+/* مبلغ کل معامله */
 .item-amount.main-amount {
   color: #111;
 }
 
-/* مبالغ نقدی (پرداختی/دریافتی یا مستقل) */
+/* مبالغ نقدی */
 .item-amount.sub-amount {
   font-size: 0.92rem;
 }
 
-/* رنگ قرمز برای مبالغ منفی (خرید نقدی / پرداخت بدهی مستقل) */
+/* مبلغ منفی */
 .item-amount.sub-amount.negative {
   color: var(--danger-color) !important;
 }
 
-/* رنگ سبز برای مبالغ مثبت (فروش نقدی / دریافت طلب مستقل) */
+/* مبلغ مثبت */
 .item-amount.sub-amount.positive {
   color: var(--success-color) !important;
 }
 
+/* ==================================================
+   تنظیمات اختصاصی محصول نخودو
+   ================================================== */
+
+/* مخفی کردن فیلدهای غیرضروری در حالت نخودو */
+.product-nokhodoo #dahanbastGroup,
+.product-nokhodoo #finalPriceGroup,
+.product-nokhodoo #nokhodooGroup {
+  display: none !important;
+}
+
+/* نمایش اونس و گرم مغز در یک سطر برای نخودو */
+.product-nokhodoo #ounceGroup,
+.product-nokhodoo #gramGroup {
+  display: block !important;
+  flex: 1 1 calc(50% - 10px) !important;
+  width: auto !important;
+  grid-column: auto !important;
+}
+
+/* ==================================================
+   تنظیمات اختصاصی محصولات گو و آبخندان
+   ================================================== */
+
+/* مخفی کردن فیلدهای غیرضروری در حالت گو و آبخندان */
+.product-go #dahanbastGroup,
+.product-go #nokhodooGroup,
+.product-go #finalPriceGroup,
+.product-abkhandan #dahanbastGroup,
+.product-abkhandan #nokhodooGroup,
+.product-abkhandan #finalPriceGroup {
+  display: none !important;
+}
+
+/* نمایش فیلدهای اونس و گرم مغز در حالت گو و آبخندان */
+.product-go #ounceGroup,
+.product-go #gramGroup,
+.product-abkhandan #ounceGroup,
+.product-abkhandan #gramGroup {
+  display: block !important;
+  flex: 1 1 calc(50% - 10px) !important;
+  width: auto !important;
+  grid-column: auto !important;
+}
+
+/* ==================================================
+   تنظیمات اختصاصی محصول خندان
+   ================================================== */
+
+/* مخفی کردن فی نهایی در حالت خندان */
+.product-khandan #finalPriceGroup {
+  display: none !important;
+}
+
+/* درصد نخودو و گرم مغز کنار هم در حالت خندان */
+.product-khandan #nokhodooGroup,
+.product-khandan #gramGroup {
+  display: block !important;
+  flex: 1 1 calc(50% - 10px) !important;
+  width: auto !important;
+  grid-column: auto !important;
+}

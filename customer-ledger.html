@@ -475,7 +475,7 @@ html,body{
             <th>نوع</th>
             <th>دسته</th>
             <th>نوع پسته</th>
-            <th>وزن</th>
+            <th>وزن خالص</th>
             <th>فی</th>
             <th>مبلغ معامله</th>
             <th>مبلغ پرداختی/دریافتی</th>
@@ -646,6 +646,11 @@ function buildDetails(item) {
 
   if (item.gram) {
     details.push(`گرم: ${formatNumber(item.gram)}`);
+  }
+ if (item.nokhodoo !== null &&
+      item.nokhodoo !== undefined &&
+      item.nokhodoo !== "") {
+    details.push(`نخودو: ${formatNumber(item.nokhodoo)}٪`);
   }
 
   // اطلاعات حساب ذخیره‌شده همراه تراکنش
