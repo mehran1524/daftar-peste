@@ -21,42 +21,31 @@ body{
     padding:0;
 }
 
-#appShell{
-    display:none;
+#licenseGate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
-#licenseGate{
-    position:fixed;
-    inset:0;
-    z-index:10000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:linear-gradient(135deg,#edf7ed 0%,#f8fbf8 100%);
-    padding:20px;
-    box-sizing:border-box;
-}
-.btn-share{
-    background-color:#1565c0 !important;
-    color:white;
-    padding:12px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    font-family:inherit;
-    font-weight:bold;
-}
-
-.license-card{
-    width:100%;
-    max-width:430px;
-    background:#fff;
-    border-radius:18px;
-    box-shadow:0 10px 35px rgba(0,0,0,0.16);
-    padding:24px 20px;
-    box-sizing:border-box;
-    text-align:center;
-    border:1px solid #e6f0e6;
+.license-card {
+    background: #ffffff;
+    border-radius: 16px;
+    max-width: 420px;
+    width: 100%;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .license-title{
@@ -181,6 +170,18 @@ body{
     flex-direction:column;
     align-items:center;
     min-height:130px;
+}
+
+.app-header h1{
+    margin:0;
+    font-size:1.25rem;
+    line-height:1.3;
+}
+
+.app-header h3{
+    margin:4px 0 0 0;
+    font-size:1rem;
+    line-height:1.3;
 }
 
 .datetime-container{
@@ -430,7 +431,7 @@ body{
 #gramGroup { order: 4; }
 #nokhodooGroup { order: 5; }
 
-/* تنظیمات جدید برای چیدمان درخواستی مهران */
+/* تنظیمات برای چیدمان دهنبست */
 .dahanbast-layout #gramGroup { 
     display: block !important; 
     order: 1 !important; 
@@ -443,7 +444,7 @@ body{
 
 .dahanbast-layout #ounceGroup { 
     order: 3 !important; 
-    flex: 1 1 100% !important; /* اونس به تنهایی در ردیف بعد قرار می‌گیرد */
+    flex: 1 1 100% !important;
 }
 
 .dahanbast-layout #dahanbastGroup,
@@ -451,6 +452,65 @@ body{
     display: none !important; 
 }
 
+/* قیمت لحظه‌ای تتر */
+.tether-price-badge{
+    position:absolute;
+    top:34px;
+    left:12px;
+    z-index:5;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:2px;
+    padding:7px 10px;
+    border-radius:10px;
+    background:rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.18);
+    color:#ffcc80;
+    text-align:left;
+    max-width:140px;
+    box-sizing:border-box;
+    backdrop-filter:blur(2px);
+}
+
+.tether-price-label{
+    font-size:0.72rem;
+    line-height:1.2;
+    font-weight:700;
+    color:#ffd59a;
+    white-space:nowrap;
+}
+
+.tether-price-value{
+    font-size:0.86rem;
+    line-height:1.25;
+    font-weight:800;
+    color:#ffb74d;
+    white-space:nowrap;
+}
+
+.tether-price-badge[data-state="error"] .tether-price-value{
+    color:#ffe082;
+    opacity:0.95;
+}
+
+@media (max-width: 480px){
+    .tether-price-badge{
+        top:30%;
+        left:8px;
+        max-width:118px;
+        padding:6px 8px;
+        border-radius:9px;
+    }
+
+    .tether-price-label{
+        font-size:0.66rem;
+    }
+
+    .tether-price-value{
+        font-size:0.78rem;
+    }
+}
 </style>
 </head>
 
@@ -464,7 +524,6 @@ body{
         <div id="licenseMessage"></div>
 
         <div id="licenseStartBox">
-            <!-- اینپوت ورود دستی اپ‌کی (برای دستگاه‌هایی که لینک رو نمی‌خونن مثل آیفون) -->
             <div id="trialAppKeyContainer" class="license-form-group" style="display:none; margin-bottom:0;">
                 <label for="trialAppKey">کلید برنامه (App Key)</label>
                 <input
@@ -492,14 +551,14 @@ body{
                 لطفا برای دریافت لایسنس در صفحه فعال‌سازی روی دکمه‌های پیام در روبیکا یا واتس‌اپ کلیک کنید.
             </div>
 
-            <!-- دکمه واتس‌اپ برای دریافت اپ‌کی نسخه آزمایشی -->
             <button
                 id="trialWhatsappSupportBtn"
                 type="button"
                 class="license-btn license-btn-secondary"
                 style="background:#25d366;"
             >
-                درخواست کلید آزمایشی برنامه(واتس اپ)           </button>
+                درخواست کلید آزمایشی برنامه(واتس اپ)
+            </button>
 
             <button id="startTrialBtn" type="button" class="license-btn license-btn-primary">
                 شروع نسخه آزمایشی
@@ -510,74 +569,73 @@ body{
             </button>
         </div>
 
-<div id="licenseFormBox">
+        <div id="licenseFormBox">
+            <div id="manualAppKeyContainer" style="display:none;">
+                <div class="license-form-group">
+                    <label for="manualAppKey">کلید برنامه (App Key)</label>
+                    <input
+                        type="text"
+                        id="manualAppKey"
+                        placeholder="App Key را وارد کنید"
+                        dir="ltr"
+                    />
+                </div>
+            </div>
 
-    <div id="manualAppKeyContainer" style="display:none;">
-        <div class="license-form-group">
-            <label for="manualAppKey">کلید برنامه (App Key)</label>
-            <input
-                type="text"
-                id="manualAppKey"
-                placeholder="App Key را وارد کنید"
-                dir="ltr"
-            />
+            <div class="license-form-group">
+                <label for="licenseCode">کد فعال‌سازی</label>
+                <input
+                    type="text"
+                    id="licenseCode"
+                    placeholder="کد دریافتی را وارد کنید"
+                />
+            </div>
+
+            <div id="iosInstallHint" style="margin:10px 0 14px 0; padding:10px 12px; font-size:0.83rem; color:#856404; background:#fff3cd; border:1px solid #ffe082; border-radius:10px; line-height:1.9; text-align:right;">
+                کاربران آیفون: لطفاً ابتدا از منوی مرورگر Safari گزینه
+                <b>Add to Home Screen</b>
+                را بزنید و برنامه را از صفحه اصلی گوشی اجرا کنید، سپس
+                <b>App Key</b>
+                و
+                <b>کد فعال‌سازی</b>
+                را وارد نمایید.
+            </div>
+
+            <div style="margin:10px 0 14px 0; font-size:0.85rem; color:#555; line-height:1.9; text-align:center;">
+                لطفا برای دریافت لایسنس روی دکمه پیام در روبیکا یا واتس‌اپ کلیک کنید.
+            </div>
+
+            <button
+                id="rubikaSupportBtn"
+                type="button"
+                class="license-btn license-btn-secondary"
+                style="margin-bottom:10px;"
+            >
+                پیام در روبیکا
+            </button>
+
+            <button
+                id="whatsappSupportBtn"
+                type="button"
+                class="license-btn license-btn-secondary"
+                style="margin-bottom:10px; background:#25d366;"
+            >
+                پیام در واتس‌اپ
+            </button>
+
+            <button
+                id="activateLicenseBtn"
+                type="button"
+                class="license-btn license-btn-primary"
+                style="margin-bottom:10px;"
+            >
+                ثبت و فعال‌سازی
+            </button>
+
+            <button id="backToTrialOptionsBtn" type="button" class="license-btn license-btn-muted">
+                بازگشت
+            </button>
         </div>
-    </div>
-
-    <div class="license-form-group">
-        <label for="licenseCode">کد فعال‌سازی</label>
-        <input
-            type="text"
-            id="licenseCode"
-            placeholder="کد دریافتی را وارد کنید"
-        />
-    </div>
-
-    <div id="iosInstallHint" style="margin:10px 0 14px 0; padding:10px 12px; font-size:0.83rem; color:#856404; background:#fff3cd; border:1px solid #ffe082; border-radius:10px; line-height:1.9; text-align:right;">
-        کاربران آیفون: لطفاً ابتدا از منوی مرورگر Safari گزینه
-        <b>Add to Home Screen</b>
-        را بزنید و برنامه را از صفحه اصلی گوشی اجرا کنید، سپس
-        <b>App Key</b>
-        و
-        <b>کد فعال‌سازی</b>
-        را وارد نمایید.
-    </div>
-
-    <div style="margin:10px 0 14px 0; font-size:0.85rem; color:#555; line-height:1.9; text-align:center;">
-        لطفا برای دریافت لایسنس روی دکمه پیام در روبیکا یا واتس‌اپ کلیک کنید.
-    </div>
-
-    <button
-        id="rubikaSupportBtn"
-        type="button"
-        class="license-btn license-btn-secondary"
-        style="margin-bottom:10px;"
-    >
-        پیام در روبیکا
-    </button>
-
-    <button
-        id="whatsappSupportBtn"
-        type="button"
-        class="license-btn license-btn-secondary"
-        style="margin-bottom:10px; background:#25d366;"
-    >
-        پیام در واتس‌اپ
-    </button>
-
-    <button
-        id="activateLicenseBtn"
-        type="button"
-        class="license-btn license-btn-primary"
-        style="margin-bottom:10px;"
-    >
-        ثبت و فعال‌سازی
-    </button>
-
-    <button id="backToTrialOptionsBtn" type="button" class="license-btn license-btn-muted">
-        بازگشت
-    </button>
-</div>
 
         <div id="licenseDeviceInfo"></div>
     </div>
@@ -587,6 +645,12 @@ body{
 <header class="app-header">
     <h1> بنام خداوندروزی رسان</h1>
     <h3>دفتر حساب پسته</h3>
+
+    <div id="tetherPriceBadge" class="tether-price-badge" data-state="loading" aria-live="polite" title="قیمت لحظه‌ای تتر">
+        <span class="tether-price-label">قیمت لحظه‌ای تتر</span>
+        <span id="tetherPriceValue" class="tether-price-value">در حال دریافت...</span>
+    </div>
+
     <div id="limitInfo" style="margin-top: 8px; font-size: 0.9rem; border-top: 1px solid rgba(208, 149, 10, 0.2); padding-top: 4px; color: #f9e31c;">
         تراکنش‌های باقی‌مانده: 100
     </div>
@@ -599,7 +663,7 @@ body{
     <div class="header-tabs">
         <button type="button" onclick="openCustomersPage()" class="tab-item tab-customers">دفتر مشتریان</button>
         <a href="report.html" class="tab-item tab-reports">گزارش دوره‌ای</a>
-        <button type="button" onclick="openPdfTrade()" class="tab-item tab-pdf">PDF  آخرین معامله</button>
+        <button type="button" onclick="openPdfTrade()" class="tab-item tab-pdf">PDF آخرین معامله</button>
 
         <button
             type="button"
@@ -626,7 +690,7 @@ body{
                         <option value="buy">خرید </option>
                         <option value="sell">فروش</option>
                         <option value="debt">پرداخت(بدهی)</option>
-                        <option value="credit">  دریافت(طلب) </option>
+                        <option value="credit"> دریافت(طلب) </option>
                         <option value="consignment">امانی</option>
                     </select>
                 </div>
@@ -671,21 +735,18 @@ body{
                 <div class="form-row">
                     <div class="form-group" id="bagCountGroup">
                         <label>تعداد (عدل)</label>
-                       <input type="text" id="bagCount" inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="گونی" />
-
+                        <input type="text" id="bagCount" inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="گونی" />
                     </div>
                     <div class="form-group" id="grossWeightGroup">
                         <label>وزن ناخالص (کیلو)</label>
-                     <input type="text" id="grossWeight" inputmode="decimal" pattern="[0-9۰-۹٠-٩.]*" placeholder="مثلاً ۱۵۵.۲" />
-
-
+                        <input type="text" id="grossWeight" inputmode="decimal" pattern="[0-9۰-۹٠-٩.]*" placeholder="مثلاً ۱۵۵.۲" />
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group" id="weightGroup">
                         <label>وزن خالص (کیلو)</label>
-                        <input type="text" id="weight" class="readonly-input" readonly  inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="مثلاً ۱۵۰.۵" />
+                        <input type="text" id="weight" class="readonly-input" readonly inputmode="decimal" pattern="[0-9۰-۹٠-٩.,٫]*" placeholder="مثلاً ۱۵۰.۵" />
                         <input type="text" id="weightWords" readonly placeholder="وزن به حروف" class="readonly-input" style="font-size:0.7rem; margin-top:5px;" />
                     </div>
                     <div class="form-group" id="priceGroup">
@@ -695,7 +756,6 @@ body{
                     </div>
                 </div>
 
-                <!-- تمامی فیلدهای متغیر محاسباتی درون کانتینر با Display Flex قرار گرفتند تا ترتیب‌بندی درستی داشته باشند -->
                 <div class="dynamic-flex-rows" id="dynamicRowsContainer">
                     <div class="form-group" id="ounceGroup">
                         <label>اونس</label>
@@ -977,6 +1037,13 @@ window.addEventListener("click", (event) => {
     if (event.target == sModal) sModal.style.display = "none";
     if (event.target === myModal) myModal.style.display = "none";
 });
+</script>
+
+<script type="module">
+import { startTetherPriceUpdates } from './utils.js';
+
+// شروع دریافت خودکار و دوره‌ای قیمت تتر از utils.js
+startTetherPriceUpdates({ intervalMs: 60000 });
 </script>
 </body>
 </html>
