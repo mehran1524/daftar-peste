@@ -494,6 +494,30 @@ body{
     opacity:0.95;
 }
 
+/* دکمه بروزرسانی دستی تتر */
+.tether-refresh-btn{
+    margin-top:6px;
+    width:100%;
+    padding:4px 8px;
+    border:1px solid rgba(255,255,255,0.28);
+    border-radius:8px;
+    background:rgba(255,255,255,0.18);
+    color:#fff8e1;
+    font-size:0.68rem;
+    line-height:1.2;
+    font-family:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:all 0.2s ease;
+}
+.tether-refresh-btn:active{
+    transform:scale(0.98);
+}
+.tether-refresh-btn:disabled{
+    opacity:0.7;
+    cursor:not-allowed;
+}
+
 @media (max-width: 480px){
     .tether-price-badge{
         top:35px;
@@ -509,6 +533,11 @@ body{
 
     .tether-price-value{
         font-size:0.78rem;
+    }
+
+    .tether-refresh-btn{
+        font-size:0.62rem;
+        padding:4px 6px;
     }
 }
 </style>
@@ -649,6 +678,9 @@ body{
     <div id="tetherPriceBadge" class="tether-price-badge" data-state="loading" aria-live="polite" title="قیمت لحظه‌ای تتر">
         <span class="tether-price-label">قیمت لحظه‌ای تتر</span>
         <span id="tetherPriceValue" class="tether-price-value">در حال دریافت...</span>
+        <button id="tetherRefreshBtn" type="button" class="tether-refresh-btn" aria-label="بروزرسانی قیمت تتر">
+            بروزرسانی
+        </button>
     </div>
 
     <div id="limitInfo" style="margin-top: 8px; font-size: 0.9rem; border-top: 1px solid rgba(208, 149, 10, 0.2); padding-top: 4px; color: #f9e31c;">
@@ -1038,12 +1070,27 @@ window.addEventListener("click", (event) => {
     if (event.target === myModal) myModal.style.display = "none";
 });
 </script>
-
+<!-- فراخوانی و اجرای توابع کمکی utils.js -->
 <script type="module">
-import { startTetherPriceUpdates } from './utils.js';
+    import { updateTetherPriceBadge, bindTetherRefreshButton, applyPersianFormatting } from "./utils.js";
 
-// شروع دریافت خودکار و دوره‌ای قیمت تتر از utils.js
-startTetherPriceUpdates({ intervalMs: 60000 });
+    document.addEventListener("DOMContentLoaded", () => {
+        // ۱. استعلام و نمایش اولیه قیمت تتر در هدر
+        updateTetherPriceBadge({
+            badgeSelector: "#tetherPriceBadge",
+            valueSelector: "#tetherPriceValue"
+        });
+
+        // ۲. فعال‌سازی دکمه رفرش تتر (پاکسازی کش و رفرش صفحه)
+        bindTetherRefreshButton({
+            buttonSelector: "#tetherRefreshBtn"
+        });
+
+        // ۳. فارسی‌سازی ارقام در بخش‌های عددی
+        applyPersianFormatting();
+    });
 </script>
+
+
 </body>
 </html>
