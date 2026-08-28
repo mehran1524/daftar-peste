@@ -1088,17 +1088,23 @@ fileInput.addEventListener("change", function(e) {
 });
 
 function exitAppAfterBackup() {
+    // تلاش اصلی: فقط در برخی محیط‌ها کار می‌کند
     try { window.close(); } catch (e) {}
 
+    // اگر close عمل نکرد، فقط یک صفحه به عقب
+    // (نه صفحه خالی)
     setTimeout(() => {
         try {
-            window.location.href = "about:blank";
-        } catch (e) {}
-    }, 250);
-
-    setTimeout(() => {
-        try { history.back(); } catch (e) {}
-    }, 500);
+            if (window.history.length > 1) {
+                history.back();
+            } else {
+                // اگر تاریخچه‌ای نبود، پیام راهنما
+                alert("پشتیبان‌گیری انجام شد. لطفاً برنامه را ببندید.");
+            }
+        } catch (e) {
+            alert("پشتیبان‌گیری انجام شد. لطفاً برنامه را ببندید.");
+        }
+    }, 300);
 }
 
 async function backupAndExit() {
