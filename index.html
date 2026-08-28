@@ -265,13 +265,14 @@ body{
     font-size: 0.72rem;
 }
 
-/* دکمه خروج / پشتیبان‌گیری و خروج - آبی تیره (سرمه‌ای) متمایز */
+/* دکمه خروج - سرمه‌ای متمایز */
 .tab-exit,
 .tab-backup-exit {
     background: #0d47a1 !important;
     color: #ffffff !important;
     font-size: 0.72rem;
 }
+
 .tab-item:active{
     filter:brightness(1.2);
 }
@@ -388,9 +389,9 @@ body{
     font-family:inherit;
     font-weight:bold;
 }
-/* دکمه اشتراک‌گذاری با رنگ سبز پسته‌ای و سایز مشابه دکمه‌های دیگر */
+
 .btn-share{
-    background-color:#689f38 !important; /* سبز پسته‌ای خوش‌رنگ */
+    background-color:#689f38 !important;
     color:white;
     padding:12px;
     border-radius:8px;
@@ -399,6 +400,7 @@ body{
     font-family:inherit;
     font-weight:bold;
 }
+
 .btn-restore{
     background-color:#e67e22 !important;
     color:white;
@@ -457,14 +459,12 @@ body{
     justify-content:flex-start;
 }
 
-/* ترتیب‌بندی پیش‌فرض برای حالت عادی */
 #ounceGroup { order: 1; }
 #dahanbastGroup { order: 2; }
 #finalPriceGroup { order: 3; }
 #gramGroup { order: 4; }
 #nokhodooGroup { order: 5; }
 
-/* تنظیمات برای چیدمان دهنبست */
 .dahanbast-layout #gramGroup { 
     display: block !important; 
     order: 1 !important; 
@@ -485,7 +485,6 @@ body{
     display: none !important; 
 }
 
-/* قیمت لحظه‌ای تتر */
 .tether-price-badge{
     position:absolute;
     top:34px;
@@ -527,7 +526,6 @@ body{
     opacity:0.95;
 }
 
-/* دکمه بروزرسانی دستی تتر */
 .tether-refresh-btn{
     margin-top:6px;
     width:100%;
@@ -543,9 +541,11 @@ body{
     cursor:pointer;
     transition:all 0.2s ease;
 }
+
 .tether-refresh-btn:active{
     transform:scale(0.98);
 }
+
 .tether-refresh-btn:disabled{
     opacity:0.7;
     cursor:not-allowed;
@@ -741,7 +741,7 @@ body{
         </button>
 
         <button type="button" id="backupExitBtn" class="tab-item tab-backup-exit">
-            پشتیبان‌گیری/خروج
+            خروج
         </button>
     </div>
 </header>
@@ -1067,81 +1067,96 @@ body{
 
 <script>
 function openCustomersPage(){ window.location.href = "customers.html"; }
+
 const backupModal = document.getElementById("backupModal");
 const openBackupBtn = document.getElementById("openBackupBtn");
 const closeBackupBtn = document.getElementById("closeBackupBtn");
 const fileInput = document.getElementById("fileInput");
 const backupExitBtn = document.getElementById("backupExitBtn");
 
-openBackupBtn.addEventListener("click", () => { backupModal.style.display = "block"; });
-closeBackupBtn.addEventListener("click", () => { backupModal.style.display = "none"; });
-window.addEventListener("click", (event) => { if (event.target == backupModal) { backupModal.style.display = "none"; } });
+openBackupBtn.addEventListener("click", () => {
+    backupModal.style.display = "block";
+});
+
+closeBackupBtn.addEventListener("click", () => {
+    backupModal.style.display = "none";
+});
+
+window.addEventListener("click", (event) => {
+    if (event.target == backupModal) {
+        backupModal.style.display = "none";
+    }
+});
 
 function triggerFileSelect() {
     const confirmRestore = confirm("توجه: بازیابی اطلاعات باعث جایگزینی داده‌های فعلی با داده‌های فایل بکاپ می‌شود. آیا مطمئن هستید؟");
-    if(confirmRestore) { fileInput.click(); }
+    if (confirmRestore) {
+        fileInput.click();
+    }
 }
 
 fileInput.addEventListener("change", function(e) {
     const file = e.target.files[0];
-    if (file) { restoreBackupFromFile(file); }
+    if (file) {
+        restoreBackupFromFile(file);
+    }
 });
 
-function exitAppAfterBackup() {
-    // تلاش اصلی: فقط در برخی محیط‌ها کار می‌کند
-    try { window.close(); } catch (e) {}
+function exitAppAfterConfirm() {
+    try {
+        window.close();
+    } catch (e) {}
 
-    // اگر close عمل نکرد، فقط یک صفحه به عقب
-    // (نه صفحه خالی)
     setTimeout(() => {
         try {
+            if (window.closed) return;
+
             if (window.history.length > 1) {
                 history.back();
             } else {
-                // اگر تاریخچه‌ای نبود، پیام راهنما
-                alert("پشتیبان‌گیری انجام شد. لطفاً برنامه را ببندید.");
+                alert("خروج انجام شد. اگر برنامه باز مانده است، لطفاً آن را دستی ببندید.");
             }
         } catch (e) {
-            alert("پشتیبان‌گیری انجام شد. لطفاً برنامه را ببندید.");
+            alert("خروج انجام شد. اگر برنامه باز مانده است، لطفاً آن را دستی ببندید.");
         }
     }, 300);
 }
 
-async function backupAndExit() {
-    if (typeof isRestoreRunning !== "undefined" && isRestoreRunning) return;
-    if (typeof isManualBackupDownloading !== "undefined" && isManualBackupDownloading) return;
+function confirmExitApp() {
+    const ok = confirm(
+        "لطفاً قبل از خروج به تب پشتیبان‌گیری بروید و از داده‌های خود پشتیبان بگیرید.\n\nآیا می‌خواهید از برنامه خارج شوید؟"
+    );
 
-    const ok = confirm("فایل پشتیبان دانلود می‌شود و سپس از برنامه خارج خواهید شد. آیا ادامه می‌دهید؟");
     if (!ok) return;
 
-    try {
-        await downloadBackup();
-
-        setTimeout(() => {
-            exitAppAfterBackup();
-        }, 1200);
-    } catch (err) {
-        console.error("Backup & Exit Error:", err);
-        alert("خطا در پشتیبان‌گیری و خروج");
-    }
+    exitAppAfterConfirm();
 }
 
 if (backupExitBtn) {
-    backupExitBtn.addEventListener("click", backupAndExit);
+    backupExitBtn.addEventListener("click", confirmExitApp);
 }
 
 $(document).ready(function() {
     if (typeof $.fn.pDatepicker === 'function') {
-        $("#dueDate").pDatepicker({ format: 'YYYY/MM/DD', autoClose: true, initialValue: false, calendar: { persian: { locale: 'fa' } } });
+        $("#dueDate").pDatepicker({
+            format: 'YYYY/MM/DD',
+            autoClose: true,
+            initialValue: false,
+            calendar: { persian: { locale: 'fa' } }
+        });
     }
 });
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(function (registration) { console.log("Service Worker Registered ✅", registration.scope); })
-      .catch(function (error) { console.log("Service Worker Registration Failed ❌", error); });
-  });
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./service-worker.js")
+            .then(function (registration) {
+                console.log("Service Worker Registered ✅", registration.scope);
+            })
+            .catch(function (error) {
+                console.log("Service Worker Registration Failed ❌", error);
+            });
+    });
 }
 
 window.addEventListener("click", (event) => {
@@ -1151,6 +1166,7 @@ window.addEventListener("click", (event) => {
     if (event.target === myModal) myModal.style.display = "none";
 });
 </script>
+
 <!-- فراخوانی و اجرای توابع کمکی utils.js -->
 <script type="module">
     import { updateTetherPriceBadge, bindTetherRefreshButton, applyPersianFormatting } from "./utils.js";
