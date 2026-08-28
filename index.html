@@ -201,67 +201,90 @@ body{
     margin-bottom:50px;
 }
 
-.header-tabs{
-    display:flex;
-    flex-direction:row;
-    direction:rtl;
-    position:absolute;
-    bottom:0;
-    right:0;
-    height:40px;
-    width:auto;
-    gap:1px;
+.header-tabs {
+    display: flex;
+    flex-direction: row;
+    direction: rtl;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 40px;
+    width: 100%;
+    gap: 0;
 }
 
-.tab-item{
-    flex:1;
-    min-width:80px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    font-size:0.8rem;
-    font-weight:bold;
-    text-decoration:none;
-    cursor:pointer;
-    transition:all 0.2s;
-    border:none;
-    outline:none;
-    font-family:inherit;
-    position:relative;
-    white-space:nowrap;
-    padding:0 6px;
+.tab-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    position: relative;
+    white-space: nowrap;
+    padding: 0 4px;
+    border-radius: 0;
 }
 
-.header-tabs .tab-item:first-child{
-    border-radius:0 15px 0 0;
+.header-tabs .tab-item:first-child {
+    border-radius: 0 15px 0 0;
 }
 
-.header-tabs .tab-item:last-child{
-    border-radius:15px 0 0 0;
+.header-tabs .tab-item:last-child {
+    border-radius: 15px 0 0 0;
 }
 
-.tab-customers{
-    background:#1976d2;
+/* دفتر مشتریان - آبی متوسط */
+.tab-customers {
+    background: #1976d2;
 }
 
-.tab-reports{
-    background:#e67e22;
+/* گزارش دوره‌ای - نارنجی */
+.tab-reports {
+    background: #e67e22;
 }
 
-.tab-pdf{
-    background:#009688;
-    font-size:0.72rem;
+/* آخرین معامله - سبز آبی */
+.tab-pdf {
+    background: #009688;
+    font-size: 0.72rem;
 }
 
-.tab-backup{
-    background:#8e44ad;
-    font-size:0.72rem;
+/* پشتیبان‌گیری - بنفش */
+.tab-backup {
+    background: #8e44ad;
+    font-size: 0.72rem;
 }
 
+/* دکمه خروج / پشتیبان‌گیری و خروج - آبی تیره (سرمه‌ای) متمایز */
+.tab-exit,
+.tab-backup-exit {
+    background: #0d47a1 !important;
+    color: #ffffff !important;
+    font-size: 0.72rem;
+}
 .tab-item:active{
     filter:brightness(1.2);
-    font-size:0.75rem;
+}
+
+@media (max-width: 480px) {
+    .header-tabs {
+        height: 42px;
+    }
+
+    .tab-item{
+        font-size:0.62rem;
+        padding:0 2px;
+    }
 }
 
 .readonly-input{
@@ -386,7 +409,6 @@ body{
     font-family:inherit;
     font-weight:bold;
 }
-
 
 .dynamic-flex-rows{
     display:flex;
@@ -715,7 +737,11 @@ body{
             title="لطفا هر هفته از اطلاعاتتون پشتیبان گیری کنید"
         >
             پشتیبان‌گیری
-            <span class="tab-tooltip">لطفا هر هفته از اطلاعاتتون پشتیبان گیری کنید</span>
+            <span class="tab-tooltip">لطفا هر هفته از اطلاعاتتون پشتیبان گیری </span>
+        </button>
+
+        <button type="button" id="backupExitBtn" class="tab-item tab-backup-exit">
+            پشتیبان‌گیری/خروج
         </button>
     </div>
 </header>
@@ -1045,6 +1071,7 @@ const backupModal = document.getElementById("backupModal");
 const openBackupBtn = document.getElementById("openBackupBtn");
 const closeBackupBtn = document.getElementById("closeBackupBtn");
 const fileInput = document.getElementById("fileInput");
+const backupExitBtn = document.getElementById("backupExitBtn");
 
 openBackupBtn.addEventListener("click", () => { backupModal.style.display = "block"; });
 closeBackupBtn.addEventListener("click", () => { backupModal.style.display = "none"; });
@@ -1059,6 +1086,43 @@ fileInput.addEventListener("change", function(e) {
     const file = e.target.files[0];
     if (file) { restoreBackupFromFile(file); }
 });
+
+function exitAppAfterBackup() {
+    try { window.close(); } catch (e) {}
+
+    setTimeout(() => {
+        try {
+            window.location.href = "about:blank";
+        } catch (e) {}
+    }, 250);
+
+    setTimeout(() => {
+        try { history.back(); } catch (e) {}
+    }, 500);
+}
+
+async function backupAndExit() {
+    if (typeof isRestoreRunning !== "undefined" && isRestoreRunning) return;
+    if (typeof isManualBackupDownloading !== "undefined" && isManualBackupDownloading) return;
+
+    const ok = confirm("فایل پشتیبان دانلود می‌شود و سپس از برنامه خارج خواهید شد. آیا ادامه می‌دهید؟");
+    if (!ok) return;
+
+    try {
+        await downloadBackup();
+
+        setTimeout(() => {
+            exitAppAfterBackup();
+        }, 1200);
+    } catch (err) {
+        console.error("Backup & Exit Error:", err);
+        alert("خطا در پشتیبان‌گیری و خروج");
+    }
+}
+
+if (backupExitBtn) {
+    backupExitBtn.addEventListener("click", backupAndExit);
+}
 
 $(document).ready(function() {
     if (typeof $.fn.pDatepicker === 'function') {
@@ -1097,10 +1161,9 @@ window.addEventListener("click", (event) => {
             buttonSelector: "#tetherRefreshBtn"
         });
 
-           applyPersianFormatting();
+        applyPersianFormatting();
     });
 </script>
-
 
 </body>
 </html>
