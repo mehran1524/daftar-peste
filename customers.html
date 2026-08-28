@@ -618,27 +618,37 @@ async function loadCustomers() {
   const listEl = document.getElementById("customersList");
   const searchValue = document.getElementById("searchInput").value.trim();
   listEl.innerHTML = "";
+
   const customers = await getAllCustomers();
+
   for (let customer of customers) {
     if (searchValue && !customer.name.includes(searchValue)) continue;
+
     const balance = await calculateCustomerBalance(customer.id);
     const div = document.createElement("div");
     div.className = "customer-item";
     div.onclick = () => window.location.href = `customer-ledger.html?id=${customer.id}`;
+
     let balanceClass = balance < 0 ? "balance-red" : (balance > 0 ? "balance-green" : "");
     let statusText = balance < 0 ? "بدهکار" : (balance > 0 ? "بستانکار" : "");
-    div.innerHTML = `<div style="flex:1;"><div class="customer-name">${customer.name}</div><small>${customer.phone ? toPersianDigits(customer.phone) : ""}</small></div>
-      <div class="${balanceClass}" style="text-align:left;">${toPersianDigits(Math.abs(balance).toLocaleString())} ${statusText ? `<span class="status-text">${statusText}</span>` : ""}<br>
-      <button class="edit-btn" onclick='event.stopPropagation(); startEdit(${JSON.stringify(customer)})'>ویرایش</button>
-      <button class="delete-btn" onclick="event.stopPropagation(); removeCustomer(${customer.id})">حذف</button></div>`;
+
+    div.innerHTML = `
+      <div style="flex:1;">
+        <div class="customer-name">${customer.name}</div>
+        <small>${customer.phone ? toPersianDigits(customer.phone) : ""}</small>
+      </div>
+      <div class="${balanceClass}" style="text-align:left;">
+        ${toPersianDigits(Math.abs(balance).toLocaleString())}
+        ${statusText ? `<span class="status-text">${statusText}</span>` : ""}
+        <br>
+        <button class="edit-btn" onclick='event.stopPropagation(); startEdit(${JSON.stringify(customer)})'>ویرایش مشتری</button>
+      </div>
+    `;
+
     listEl.appendChild(div);
   }
 }
 
-async function removeCustomer(id) {
-  if (!confirm("آیا از حذف این مشتری مطمئن هستید؟")) return;
-  await deleteCustomer(id); await loadCustomers(); await checkAndRenderDueAlerts();
-}
 
 document.getElementById("customerPhone").addEventListener("input", function(e) {
   const englishValue = toEnglishDigits(e.target.value).replace(/\D/g, "").slice(0, 11);
