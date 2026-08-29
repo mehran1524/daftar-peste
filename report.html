@@ -138,7 +138,6 @@
             gap: 12px;
         }
 
-
         .summary-box {
             border: 1px solid var(--border);
             border-radius: 14px;
@@ -169,21 +168,29 @@
             color: var(--warning);
         }
 
-        .report-meta {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 10px;
+              .report-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
             color: var(--muted);
             font-size: 13px;
             margin-bottom: 12px;
         }
 
+        #reportRangeLabel {
+            text-align: right;
+        }
+
+        #reportGeneratedAt {
+            text-align: left;
+        }
+
+
         .table-wrapper {
             overflow-x: auto;
         }
 
-            /* محدود کردن استایل‌ها به جدول معاملات برای جلوگیری از تداخل با تقویم */
+        /* محدود کردن استایل‌ها به جدول معاملات برای جلوگیری از تداخل با تقویم */
         .table-wrapper table {
             width: 100%;
             border-collapse: collapse;
@@ -234,7 +241,6 @@
             background: transparent !important;
         }
 
-
         .empty-state {
             text-align: center;
             padding: 35px 10px;
@@ -271,24 +277,75 @@
             color: #1565c0;
         }
 
+        /* چیدمان برای تبلت و موبایل */
         @media (max-width: 1000px) {
             .filters-grid {
-                grid-template-columns: repeat(2, minmax(150px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .filters-grid .field-submit {
+                grid-column: span 2;
             }
 
             .summary-grid {
-                grid-template-columns: repeat(2, minmax(150px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .summary-grid .summary-box-balance {
+                grid-column: span 2;
             }
         }
 
         @media (max-width: 600px) {
-            .filters-grid,
-            .summary-grid {
-                grid-template-columns: 1fr;
+            .filters-card,
+            .summary-card,
+            .table-card {
+                padding: 14px;
+            }
+
+            .report-header {
+                padding: 16px;
             }
 
             .report-header h1 {
-                font-size: 20px;
+                font-size: 18px;
+            }
+
+            .report-header p {
+                font-size: 12px;
+            }
+
+            .filters-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .filters-grid .field-submit {
+                grid-column: span 2;
+                margin-top: 4px;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .summary-grid .summary-box-balance {
+                grid-column: span 2;
+            }
+
+            .summary-box {
+                padding: 10px;
+            }
+
+            .summary-box .title {
+                font-size: 12px;
+            }
+
+            .summary-box .value {
+                font-size: 16px;
             }
         }
 
@@ -380,13 +437,11 @@
 
             <div class="field">
                 <label for="fromDate">از تاریخ</label>
-                <!-- اعمال ساختار و کلاس‌های مشابه dueDate در ایندکس جهت کارکرد صحیح در موبایل -->
                 <input type="text" id="fromDate" placeholder="انتخاب تاریخ" autocomplete="off" readonly style="background: #fff; cursor: pointer;">
             </div>
 
             <div class="field">
                 <label for="toDate">تا تاریخ</label>
-                <!-- اعمال ساختار و کلاس‌های مشابه dueDate در ایندکس جهت کارکرد صحیح در موبایل -->
                 <input type="text" id="toDate" placeholder="انتخاب تاریخ" autocomplete="off" readonly style="background: #fff; cursor: pointer;">
             </div>
 
@@ -398,19 +453,18 @@
                     <option value="sell">فروش</option>
                     <option value="debt">بدهی / پرداخت </option>
                     <option value="credit">طلب / دریافت </option>
-                    <option value="consignment">امانی</option> <!-- اضافه شد -->
+                    <option value="consignment">امانی</option>
                 </select>
             </div>
 
-           <div class="field">
-    <label for="customerFilter">نام مشتری</label>
-    <select id="customerFilter">
-        <option value="">همه مشتری‌ها</option>
-    </select>
-</div>
-
-
             <div class="field">
+                <label for="customerFilter">نام مشتری</label>
+                <select id="customerFilter">
+                    <option value="">همه مشتری‌ها</option>
+                </select>
+            </div>
+
+            <div class="field field-submit">
                 <button id="generateReportBtn" class="btn btn-primary" type="button" style="width:100%;">
                     تولید گزارش
                 </button>
@@ -425,13 +479,15 @@
             <div id="reportGeneratedAt">زمان تولید گزارش: -</div>
         </div>
 
-             <div class="summary-grid">
+        <div class="summary-grid">
 
-            <div class="summary-box">
+            <!-- سطر اول: تراز مالی تمام‌عرض -->
+            <div class="summary-box summary-box-balance">
                 <div class="title">تراز مالی بازه</div>
                 <div id="rangeBalance" class="value">۰</div>
             </div>
 
+            <!-- سطر دوم: خرید و فروش دو ستونه -->
             <div class="summary-box">
                 <div class="title">جمع خرید</div>
                 <div id="totalBuy" class="value text-red">۰</div>
@@ -442,6 +498,7 @@
                 <div id="totalSell" class="value text-green">۰</div>
             </div>
 
+            <!-- سطر سوم: بدهی و طلب دو ستونه -->
             <div class="summary-box">
                 <div class="title">جمع بدهی / پرداختی</div>
                 <div id="totalDebt" class="value text-red">۰</div>
@@ -452,7 +509,7 @@
                 <div id="totalCredit" class="value text-green">۰</div>
             </div>
 
-            <!-- کادرهای جدید مجموع عدل -->
+            <!-- سطر چهارم: عدل‌های خرید و فروش دو ستونه -->
             <div class="summary-box">
                 <div class="title">مجموع عدل خرید شده</div>
                 <div id="totalBuyBags" class="value text-red" style="font-size: 18px;">۰ عدل</div>
@@ -500,17 +557,14 @@
     </section>
 
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/persian-date/dist/persian-date.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/persian-datepicker/dist/js/persian-datepicker.js"></script>
 
 <script src="db.js"></script>
 <script src="customers.js"></script>
-
-
 <script type="module" src="report.js"></script>
-
-<!-- اعمال کد راه‌اندازی درست برای فیلدهای از تاریخ و تا تاریخ مشابه فایل ایندکس -->
 
 </body>
 </html>
