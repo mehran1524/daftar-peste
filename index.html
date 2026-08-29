@@ -573,6 +573,32 @@ body{
         padding:4px 6px;
     }
 }
+.backup-modal-content{
+    max-width: 450px;
+    min-height: 520px;
+    padding: 20px 20px 18px 20px;
+}
+
+.backup-help-text{
+    margin: 14px 0 0 0;
+    font-size: 0.8rem;
+    line-height: 1.9;
+    color: #c62828;
+    text-align: right;
+    background: #fff5f5;
+    border: 1px solid #ffcdd2;
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+.backup-help-text p{
+    margin: 0 0 10px 0;
+}
+
+.backup-help-text p:last-child{
+    margin-bottom: 0;
+}
+
 </style>
 </head>
 
@@ -737,7 +763,7 @@ body{
             title="لطفا هر هفته از اطلاعاتتون پشتیبان گیری کنید"
         >
             پشتیبان‌گیری
-            <span class="tab-tooltip">لطفا هر هفته از اطلاعاتتون پشتیبان گیری </span>
+            <span class="tab-tooltip">لطفا هر هفته از اطلاعاتتون پشتیبان بگیرید </span>
         </button>
 
         <button type="button" id="backupExitBtn" class="tab-item tab-backup-exit">
@@ -964,7 +990,7 @@ body{
 </main>
 
 <div id="backupModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content backup-modal-content">
         <span class="close-modal" id="closeBackupBtn">&times;</span>
         <h2 style="color:#8e44ad; margin-bottom: 15px;">پشتیبان‌گیری از داده‌ها</h2>
         <p style="font-size: 0.8rem; line-height: 1.6; color: #666;">
@@ -975,6 +1001,13 @@ body{
             <button type="button" class="btn-share" onclick="shareBackup()">اشتراک‌گذاری در فضای ابری</button>
             <button type="button" class="btn-restore" onclick="triggerFileSelect()">بازیابی اطلاعات</button>
         </div>
+
+        <div class="backup-help-text">
+            <p>کاربران آیفون برای محفوظ ماندن اطلاعات پشتیبان‌گیری شده‌شون در صورت خرابی گوشی لطفا از دکمه اشتراک گذاری در فضای ابری استفاده کرده و فایل دانلودی را در فضای ابری آی‌کلود درایو ذخیره کنند.</p>
+            <p>کاربران اندروید برای محفوظ ماندن اطلاعات پشتیبان‌گیری شده در صورت خرابی گوشی ابتدا روی دکمه دانلود اطلاعات بزنید سپس فایل دانلود شده رو به فضای ابری گوگل درایو منتقل کنید.</p>
+            <p>برای بازیابی اطلاعات ابتدا روی دکمه بازیابی اطلاعات بزنید و سپس فایل دانلود شده را از فضای ابری آی‌کلود یا گوگل درایو انتخاب کرده و سپس OK رو بزنید تا اطلاعات شما بازیابی و جایگزین بشن.</p>
+        </div>
+
         <input type="file" id="fileInput" accept=".json" style="display:none;" />
     </div>
 </div>
